@@ -30,7 +30,6 @@ export default function NewPost() {
 
 }
 
-
   return (
     <>
       <NewPostContainer>
@@ -39,7 +38,7 @@ export default function NewPost() {
                 <span>What are you going to share today?</span>
                 <input type="text" disabled={disableButton} placeholder="http://..." value={url} onChange={e => setUrl(e.target.value)} required/>
                 <input type="text" disabled={disableButton} placeholder="type a description"  value={message} onChange={e => setMessage(e.target.value)} />
-                <div><Publish type="submit" disabled={disableButton}>Publish</Publish></div>
+                <div><Publish type="submit" disabled={disableButton}>{disableButton ? "Publishing" : "Publish"}</Publish></div>
           </Form >
       </NewPostContainer>
     </>
@@ -55,6 +54,15 @@ const NewPostContainer = styled.div`
   border-radius: 16px;
   position:relative;
   padding-top:25px;
+  padding-bottom:10px;
+  @media (max-width: 560px) {
+	width:100%;
+  border-radius: 0px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+  .UserAvatar{
+    display:none;
+  }
+}
 `;
 const UserAvatar = styled.div`
   position:absolute;
@@ -67,7 +75,6 @@ const UserAvatar = styled.div`
 const Form = styled.form`
     display:flex;
     flex-direction: column;
-    justify-content:center;
     width: 100%;
     background-color: #FFFFFF;
     padding-left: 87px;
@@ -77,7 +84,7 @@ const Form = styled.form`
       font-family: 'Lato';
       font-style: normal;
       font-weight: 300;
-      font-size: 20px;
+      font-size: 3ex;
       line-height: 24px;
       color: #707070;
     } 
