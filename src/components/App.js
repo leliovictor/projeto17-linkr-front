@@ -4,7 +4,8 @@ import { useState } from "react";
 
 import "../assets/styles/reset.css";
 import "../assets/styles/style.css";
-import LoginPage from "./LoginPage";
+//import LoginPage from "./LoginPage";
+import NewPost from "./NewPost"
 
 export default function App() {
   const [data, setData] = useState({});
@@ -13,7 +14,7 @@ export default function App() {
     <UserContext.Provider value={{ data, setData }}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/" element={<NewPost />}/>
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>
