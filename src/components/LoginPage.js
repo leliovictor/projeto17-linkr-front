@@ -33,6 +33,8 @@ export default function LoginPage() {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////--- MUDAR O NAVIGATE ABAIXO PARA PAGINA QUE ESTA TRABAHANDO ---///
   function registerLogin(data, body) {
     setData({ ...data });
     saveLoginInLocalStorage(body);
@@ -61,7 +63,7 @@ export default function LoginPage() {
     }
   }
 
-  //useEffect(() => checkLocalStorageToLogin(), []);
+  useEffect(() => checkLocalStorageToLogin(), []);
 
   return (
     <Content>
