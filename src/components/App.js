@@ -7,6 +7,7 @@ import "../assets/styles/style.css";
 //import LoginPage from "./LoginPage";
 import NewPost from "./NewPost"
 import LoginPage from "./LoginPage";
+import Timeline from "./Timeline";
 import SignUpPage from "./SignUpPage";
 import TimelinePage from "./TimelinePage";
 
@@ -19,8 +20,9 @@ export default function App() {
         <Routes>
           <Route path="/timeline" element={<NewPost />}/>
           <Route path="/" element={<LoginPage />} />
+          <Route path="/timeline" element={<Timeline />} />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/timeline" element={<TimelinePage />} />
+          {/*<Route path="/timeline" element={<TimelinePage />} />*/}
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>
