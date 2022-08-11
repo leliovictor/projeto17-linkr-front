@@ -5,26 +5,40 @@ import { useNavigate } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
 
 export default function Header() {
-
   const navigate = useNavigate();
   const { data } = useContext(UserContext);
-  
+
   function checkToken() {
-    if(!data.config) {
+    if (!data.config) {
       navigate("/");
     }
   }
-  
   useEffect(() => checkToken(), []);
-  
+
   const [logoutButton, setLogoutButton] = useState(false);
-  
-  function toggleLogoutButton() {
-    setLogoutButton(!logoutButton);
+
+  function showLogoutButton() {
+    setLogoutButton(true);
+  }
+
+  useEffect(() => {
+    if (logoutButton) window.addEventListener("click", clickListener);
+  }, [logoutButton]);
+
+  function clickListener(event) {
+    const classString = event.target.className;
+    if (typeof classString == "string") {
+      const classArray = classString.split(" ");
+      if (!classArray.includes("logout-buttom")) {
+        setLogoutButton(false);
+        window.removeEventListener("click", clickListener);
+      }
+    }
   }
 
   function logout() {
     localStorage.removeItem("autoLogin");
+    window.removeEventListener("click", clickListener);
     navigate("/");
   }
 
@@ -32,14 +46,12 @@ export default function Header() {
     <Content>
       <Title>linkr</Title>
       <LogoutDiv>
-        <section>
-          <ArrowUp
-            onClick={toggleLogoutButton}
-            rotate={logoutButton ? "180deg" : "0"}
-          />
+        <section onClick={showLogoutButton}>
+          <ArrowUp rotate={logoutButton ? "180deg" : "0"} />
           <img src={data.pictureUrl} alt="user" />
         </section>
         <LogoutButton
+          className="logout-buttom"
           onClick={logout}
           translate={logoutButton ? "72px" : "25px"}
         >
@@ -58,7 +70,6 @@ const Content = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1;
 `;
 
 const Title = styled.h1`
@@ -87,6 +98,7 @@ const LogoutDiv = styled.div`
     padding-right: 17px;
     padding-left: 30px;
     z-index: 1;
+    cursor: pointer;
   }
 
   img {
@@ -103,7 +115,6 @@ const ArrowUp = styled(IoIosArrowUp)`
   font-size: 25px;
   margin-right: 15px;
   transform: rotate(${(props) => props.rotate});
-  cursor: pointer;
 `;
 
 const LogoutButton = styled.button`
