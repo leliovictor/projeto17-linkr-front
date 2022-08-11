@@ -2,6 +2,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { RotatingLines } from "react-loader-spinner";
+import Header from "./Header";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
@@ -29,7 +30,6 @@ export default function Timeline() {
   
   function BuildPosts (props) {
     const { post } = props
-    console.log("post", post)
 
     return (
       <>
@@ -65,6 +65,7 @@ export default function Timeline() {
 
   return (
     <>
+      <Header />
       <TimelineStyle>
         <div className="timeline">
           <p>timeline</p>
