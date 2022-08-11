@@ -1,19 +1,19 @@
 import axios from "axios";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useContext, useEffect } from "react";
-
-import UserContext from "../contexts/UserContext";
+import { useState } from "react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [pictureUrl, setPictureUrl] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { setData } = useContext(UserContext);
 
-  async function login(e) {
+  async function signup(e) {
     setLoading(true);
 
     e.preventDefault();
@@ -21,47 +21,20 @@ export default function LoginPage() {
     const body = {
       email,
       password,
+      username,
+      pictureUrl,
     };
 
     try {
-      const response = await axios.post("http://localhost:4000/", body);
+      const response = await axios.post("http://localhost:4000/sign-up", body);
 
-      registerLogin(response.data, body);
+      alert(`Your registration has been successfully completed.`);
+      navigate("/");
     } catch (err) {
       alert(`Error: ${err.response.data}`);
       setLoading(false);
     }
   }
-
-  function registerLogin(data, body) {
-    setData({ ...data });
-    saveLoginInLocalStorage(body);
-
-    navigate("/timeline");
-  }
-
-  function saveLoginInLocalStorage(body) {
-    const bodySave = JSON.stringify(body);
-    localStorage.setItem("autoLogin", bodySave);
-  }
-
-  async function checkLocalStorageToLogin() {
-    const bodySave = localStorage.getItem("autoLogin");
-    const body = JSON.parse(bodySave);
-
-    if (body !== null) {
-      setLoading(true);
-
-      try {
-        const response = await axios.post("http://localhost:4000/", body);
-        registerLogin(response.data, body);
-      } catch (err) {
-        setLoading(false);
-      }
-    }
-  }
-
-  //useEffect(() => checkLocalStorageToLogin(), []);
 
   return (
     <Content>
@@ -69,8 +42,8 @@ export default function LoginPage() {
         <h1>linkr</h1>
         <h2>save, share and discover the best links on the web</h2>
       </TitleDiv>
-      <LoginDiv>
-        <form onSubmit={login}>
+      <SignUpDiv>
+        <form onSubmit={signup}>
           <Input
             type="email"
             placeholder="e-mail"
@@ -89,14 +62,32 @@ export default function LoginPage() {
             disabled={loading ? "disabled" : ""}
             background={loading}
           />
+          <Input
+            type="text"
+            placeholder="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            disabled={loading ? "disabled" : ""}
+            background={loading}
+          />
+          <Input
+            type="text"
+            placeholder="picture url"
+            value={pictureUrl}
+            onChange={(e) => setPictureUrl(e.target.value)}
+            required
+            disabled={loading ? "disabled" : ""}
+            background={loading}
+          />
           <button type="submit" disabled={loading ? "disabled" : ""}>
-            Log In
+            Sign Up
           </button>
         </form>
-        <Link to={"/sign-up"}>
-          <h1>First time? Create an account!</h1>
+        <Link to={"/"}>
+          <h1>Switch back to log in</h1>
         </Link>
-      </LoginDiv>
+      </SignUpDiv>
     </Content>
   );
 }
@@ -136,7 +127,7 @@ const TitleDiv = styled.div`
   }
 `;
 
-const LoginDiv = styled.div`
+const SignUpDiv = styled.div`
   width: 50%;
   display: flex;
   flex-direction: column;

@@ -1,54 +1,79 @@
 import styled from "styled-components";
-import  { useState } from  "react";
 import axios from "axios";
+import { useState, useContext } from "react";
+import UserContext from "../contexts/UserContext.js";
+import { useNavigate } from "react-router-dom";
 
 export default function NewPost() {
   const [url, setUrl] = useState();
   const [message, setMessage] = useState();
   const [disableButton,setDisableButton] = useState(false)
+  const { data } = useContext(UserContext);
+  const navigate = useNavigate();
 
   function submitPublish(event){
     event.preventDefault();
     
     setDisableButton(true);
     
-    const newPost =
-        {
+    const newPost = {
             url,
-            message          
+            message
+          }          
             
-        }
+    console.log(newPost)
+
+    const { config }  = data
     
-    const promise = axios.post("http://localhost:3000/posts", newPost)
+    const promise = axios.post("http://localhost:4000/posts", newPost, config)
     
     promise
-    .then(res =>{ 
-        console.log("post criado")
+    .then(res =>{
+      setDisableButton(false);
+      setUrl('')
+      setMessage('')
+      navigate("/timeline");
     })
-    .catch(err=> {alert("Erro, preencha corretamente os dados");
+    .catch(err=> {alert("Houve um erro ao publicar seu link");
     setDisableButton(false);});
 
 }
 
   return (
     <>
+    <Content>
       <NewPostContainer>
-          <UserAvatar></UserAvatar>
+          <UserAvatar>
+            <img src={data.pictureUrl} alt="user avatar" />
+          </UserAvatar>
           <Form onSubmit={submitPublish} >
                 <span>What are you going to share today?</span>
                 <input type="text" disabled={disableButton} placeholder="http://..." value={url} onChange={e => setUrl(e.target.value)} required/>
                 <input type="text" disabled={disableButton} placeholder="type a description"  value={message} onChange={e => setMessage(e.target.value)} />
-                <div><Publish type="submit" disabled={disableButton}>{disableButton ? "Publishing" : "Publish"}</Publish></div>
+                <div><Publish type="submit" disabled={disableButton}>{disableButton ? "Publishing..." : "Publish"}</Publish></div>
           </Form >
       </NewPostContainer>
+    </Content>
     </>
   );
 }
+const Content = styled.div`
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  padding-left: 10%;
+
+  background-color: #151515;
+  @media (max-width: 560px) {
+    padding-left: 0;
+  }
+`;
 
 const NewPostContainer = styled.div`
   width: 50%;
   height: 33vh;
-  
+  margin-top:15%;
   background: #FFFFFF;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 16px;
@@ -66,11 +91,14 @@ const NewPostContainer = styled.div`
 `;
 const UserAvatar = styled.div`
   position:absolute;
-  top: 15px;
+  top: 20px;
   left:15px;
-  width:50px;
-  height:50px;
-  background-color:red;
+  img{
+    object-fit:cover;
+    border-radius: 26.5px;
+    width:50px;
+    height:50px;
+  }
 `
 const Form = styled.form`
     display:flex;
@@ -130,7 +158,7 @@ const Publish = styled.button`
         border-radius: 5px;
         border:none;
         opacity: ${props => props.disabled ? 0.4 : 1 };
-
+        
         font-family: 'Lato';
         font-style: normal;
         font-weight: 700;
