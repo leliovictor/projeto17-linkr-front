@@ -18,7 +18,8 @@ export default function Header() {
   const [logoutButton, setLogoutButton] = useState(false);
 
   function showLogoutButton() {
-    setLogoutButton(true);
+    if(logoutButton) window.removeEventListener("click", clickListener);
+    setLogoutButton(!logoutButton);
   }
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function Header() {
 }
 
 const Content = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 72px;
   background: #151515;
 

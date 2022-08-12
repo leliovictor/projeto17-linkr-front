@@ -58,22 +58,20 @@ export default function NewPost() {
   );
 }
 const Content = styled.div`
-  width: 100vw;
-  height: 100vh;
 
   display: flex;
-  padding-left: 10%;
+  justify-content: space-around;
 
-  background-color: #151515;
   @media (max-width: 560px) {
     padding-left: 0;
   }
 `;
 
 const NewPostContainer = styled.div`
-  width: 50%;
-  height: 33vh;
-  margin-top:15%;
+  width: 100%;
+  max-width: 611px;
+  height: 100%;
+  margin-top:5%;
   background: #FFFFFF;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 16px;

@@ -2,86 +2,124 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { RotatingLines } from "react-loader-spinner";
+
 import Header from "./Header";
+import NewPost from "./NewPost";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
 
   useEffect(() => {
-    const receive = axios.get("http://localhost:4000/timeline")
-    receive.then(response => {
-        setPostData(response.data)
+    const receive = axios.get("http://localhost:4000/timeline");
+    receive.then((response) => {
+      setPostData(response.data);
 
-        if(response.data.length === 0) {
-          alert("There are no posts yet")
-        };
+      if (response.data.length === 0) {
+        console.log("There are no posts yet");
+      }
     });
 
-    receive.catch(err => {
-      alert( "An error occured while trying to fetch the posts, please refresh the page")
-      console.log(err)
+    receive.catch((err) => {
+      alert(
+        "An error occured while trying to fetch the posts, please refresh the page"
+      );
+      console.log(err);
     });
-  },[]);
+  }, []);
 
-  function redirect (url) {
-    window.open(url, '_blank')
-    console.log("entrou redirect", url)
+  function redirect(url) {
+    window.open(url, "_blank");
+    console.log("entrou redirect", url);
   }
-  
-  function BuildPosts (props) {
-    const { post } = props
+
+  function BuildPosts(props) {
+    const { post } = props;
 
     return (
       <>
-          <PostStyle>
-            <div className="column1">
-              <div className="profilePicture"><img src={`${post.pictureUrl}`} /></div>
-              <p>20 likes</p>
+        <PostStyle>
+          <div className="column1">
+            <div className="profilePicture">
+              <img src={`${post.pictureUrl}`} />
             </div>
-            <div className="column2">
-              <div className="profileName"><p>{post.username}</p></div>
-              <div className="postMessage"><p>{post.message}</p></div>
-              <div onClick={() => redirect(post.url)} className="link">
-                <p>{post.urlInfo.title}</p>
-                <p>{post.urlInfo.description}</p>
-                <p>{post.url}</p>
-                <img src={post.urlInfo.image}/>
-              </div>
+            <p>20 likes</p>
+          </div>
+          <div className="column2">
+            <div className="profileName">
+              <p>{post.username}</p>
             </div>
-          </PostStyle>
+            <div className="postMessage">
+              <p>{post.message}</p>
+            </div>
+            <div onClick={() => redirect(post.url)} className="link">
+              <p>{post.urlInfo.title}</p>
+              <p>{post.urlInfo.description}</p>
+              <p>{post.url}</p>
+              <img src={post.urlInfo.image} />
+            </div>
+          </div>
+        </PostStyle>
       </>
-    )
-  };
+    );
+  }
 
-  function RenderPosts () {
+  function RenderPosts() {
     return (
       <>
         {postData.map((post, index) => (
-          <BuildPosts key={index} post={post}/>
+          <BuildPosts key={index} post={post} />
         ))}
       </>
-    )
-  };
+    );
+  }
 
   return (
     <>
       <Header />
+      <Title>
+        <h1>timeline</h1>
+      </Title>
+      <NewPost />
       <TimelineStyle>
         <div className="timeline">
-          <p>timeline</p>
-          {postData.length !== 0 ? <RenderPosts /> : <RotatingLines strokeColor="grey" strokeWidth="5" animationDuration="0.75" width="96" visible={true}/>}
+          {postData.length !== 0 ? (
+            <RenderPosts />
+          ) : (
+            <RotatingLines
+              strokeColor="grey"
+              strokeWidth="5"
+              animationDuration="0.75"
+              width="96"
+              visible={true}
+            />
+          )}
         </div>
       </TimelineStyle>
     </>
-  )
-};
+  );
+}
+
+const Title = styled.div`
+  font-family: "Oswald";
+  font-weight: 700;
+  font-size: 43px;
+  line-height: 64px;
+  width: 100%;
+  margin-top: 78px;
+  display: flex;
+  justify-content: space-around;
+  color: #ffffff;
+  h1 {
+    width: 611px;
+  }
+`;
 
 const TimelineStyle = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 150px;
+  margin-top: 29px;
 
   .timeline {
     display: flex;
@@ -89,13 +127,13 @@ const TimelineStyle = styled.div`
     align-items: center;
   }
 
-  .timeline > p{
-    font-family: 'Oswald';
+  .timeline > p {
+    font-family: "Oswald";
     font-style: normal;
     font-weight: 700;
     font-size: 43px;
     line-height: 64px;
-    color: #FFFFFF;
+    color: #ffffff;
     margin-bottom: 43px;
   }
 
@@ -104,8 +142,6 @@ const TimelineStyle = styled.div`
       width: 100%;
     }
   }
-
-
 `;
 
 const PostStyle = styled.div`
@@ -148,30 +184,30 @@ const PostStyle = styled.div`
   }
 
   .profileName {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 19px;
     line-height: 23px;
-    color: #FFFFFF;
+    color: #ffffff;
     max-width: 502px;
     margin-bottom: 7px;
   }
 
   .postMessage {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 17px;
     line-height: 20px;
-    color: #B7B7B7;
+    color: #b7b7b7;
     max-width: 502px;
   }
 
   .link {
     width: 503px;
     height: 155px;
-    border: 1px solid #4D4D4D;
+    border: 1px solid #4d4d4d;
     border-radius: 11px;
     position: relative;
     display: flex;
@@ -192,7 +228,7 @@ const PostStyle = styled.div`
   }
 
   .link > p {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     max-width: 302px;
@@ -202,25 +238,25 @@ const PostStyle = styled.div`
   .link p:nth-child(1) {
     font-size: 16px;
     line-height: 19px;
-    color: #CECECE;
+    color: #cecece;
   }
   .link p:nth-child(2) {
     font-size: 11px;
     line-height: 13px;
-    color: #9B9595;
+    color: #9b9595;
   }
 
   .link p:nth-child(3) {
     font-size: 11px;
     line-height: 13px;
-    color: #CECECE;
+    color: #cecece;
   }
 
   @media (max-width: 580px) {
     width: 100%;
     height: 232px;
     border-radius: 0px;
-    
+
     .column1 {
       width: 50px;
       margin-left: 15px;
@@ -278,14 +314,13 @@ const PostStyle = styled.div`
     .link p:nth-child(2) {
       font-size: 9px;
       line-height: 11px;
-      color: #9B9595;
+      color: #9b9595;
     }
 
     .link p:nth-child(3) {
       font-size: 9px;
       line-height: 11px;
-      color: #CECECE;
+      color: #cecece;
     }
-    
   }
 `;
