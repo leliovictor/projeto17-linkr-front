@@ -2,6 +2,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { RotatingLines } from "react-loader-spinner";
+import { FiTrash } from "react-icons/fi";
 
 import Header from "./Header";
 import NewPost from "./NewPost";
@@ -58,6 +59,7 @@ export default function Timeline() {
               <img src={post.urlInfo.image} />
             </div>
           </div>
+          <TrashCanIcon onClick={()=>renderModalDelete(post.id)}/>
         </PostStyle>
       </>
     );
@@ -71,6 +73,16 @@ export default function Timeline() {
         ))}
       </>
     );
+  }
+
+  function renderModalDelete() {
+    console.log('render modal com butões.. children props pra isso?');
+    //ver no trackit como foi feito essa parte
+  }
+  function deletePost(id) {
+   console.log('delete' + id);
+    
+
   }
 
   return (
@@ -323,4 +335,14 @@ const PostStyle = styled.div`
       color: #cecece;
     }
   }
+`;
+
+const TrashCanIcon = styled(FiTrash)`
+  position: absolute;
+  top: 23px;
+  right: 23px;
+  color: #FFFFFF;
+  font-size: 20px;
+  fill: #FFFFFF;
+  cursor: pointer;
 `;
