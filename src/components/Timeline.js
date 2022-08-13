@@ -2,6 +2,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
+import ReactTooltip from "react-tooltip";
 
 import Header from "./Header";
 import NewPost from "./NewPost";
@@ -10,7 +11,6 @@ import UserContext from "../contexts/UserContext";
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
   const { data } = useContext(UserContext);
-  console.log("data: ", data)
 
   useEffect(() => {
     const receive = axios.get("http://localhost:4000/timeline");
@@ -32,11 +32,46 @@ export default function Timeline() {
 
   function redirect(url) {
     window.open(url, "_blank");
-  }
+  };
 
   function BuildPosts(props) {
     const { post } = props;
-    const [likeButton, setLikeButton] = useState("heart-outline")
+    const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
+    const [likeButton, setLikeButton] = useState("heart-outline");
+    const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto")
+    let iAmLiked = false
+
+    useEffect(() => {
+      ReactTooltip.rebuild();
+
+      for(let i = 0; i < post.usersWhoLiked.length; i++) {
+        if (post.usersWhoLiked[i]?.username == data.username) {
+          setLikeButton("heart")
+          if (post.usersWhoLiked.length >= 2) {
+            setUsersWhoLiked(`Você, 
+              ${post.usersWhoLiked[i - 1]?.username || post.usersWhoLiked[i + 1]?.username} 
+              ${post.usersWhoLiked.length > 3 ? "curtiram a foto" : ` e outras ${quantityOfLike - 2} pessoas`}`
+            )
+          } else {
+            setUsersWhoLiked(`Você curtiu o post`)
+          }
+          iAmLiked = true
+        } 
+      };
+
+      if (!iAmLiked) {
+        if (post.usersWhoLiked.length == 2){
+          setUsersWhoLiked(`${post.usersWhoLiked[0].username}, ${post.usersWhoLiked[1].username} curtiram o post`)
+        }
+        else if (post.usersWhoLiked.length > 2) {
+          setUsersWhoLiked(`${post.usersWhoLiked[0].username}, ${post.usersWhoLiked[1].username} e outras ${quantityOfLike - 2} pessoas`)
+        }
+        else if (post.usersWhoLiked.length == 1) {
+          setUsersWhoLiked(`${post.usersWhoLiked[0].username} curtiu o post`)
+
+        }
+      };
+    },[]);
 
     function like () {
       if (likeButton == "heart") {
@@ -44,6 +79,7 @@ export default function Timeline() {
           
         dislikeAxios.then(() => {
           setLikeButton("heart-outline")
+          setQuantityOfLike(quantityOfLike - 1)
         });
 
         dislikeAxios.catch((err) => {
@@ -55,13 +91,14 @@ export default function Timeline() {
         
         likeAxios.then(() => {
           setLikeButton("heart")
+          setQuantityOfLike(quantityOfLike + 1)
         });
 
         likeAxios.catch((err) => {
           console.log(err)
         });  
       }
-    }
+    };
 
     return (
       <>
@@ -70,10 +107,8 @@ export default function Timeline() {
             <div className="profilePicture">
               <img src={`${post.pictureUrl}`} />
             </div>
-
-            <ion-icon name={likeButton} className={likeButton == "heart-outline" ? "likeEmpty" : "likeRed" }  onClick={() => like()} />
-
-            <p>{post.likes} likes</p>
+            <ion-icon name={likeButton} onClick={() => like()} />
+            <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
           </div>
           <div className="column2">
             <div className="profileName">
@@ -92,7 +127,7 @@ export default function Timeline() {
         </PostStyle>
       </>
     );
-  }
+  };
 
   function RenderPosts() {
     return (
@@ -100,15 +135,17 @@ export default function Timeline() {
         {postData.map((post, index) => (
           <BuildPosts key={index} post={post} />
         ))}
+        <ReactTooltip type="light" place="bottom" effect="solid"/>
       </>
     );
-  }
+  };
 
   return (
     <>
       <Header />
       <Title>
-        <h1>timeline</h1>
+        <h1 data-tip="" data-for="teste" >timeline</h1>
+        <ReactTooltip id="teste"  >olaolaola</ReactTooltip>
       </Title>
       <NewPost />
       <TimelineStyle>
