@@ -1,13 +1,16 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 
 import Header from "./Header";
 import NewPost from "./NewPost";
+import UserContext from "../contexts/UserContext";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
+  const { data } = useContext(UserContext);
+  console.log("data: ", data)
 
   useEffect(() => {
     const receive = axios.get("http://localhost:4000/timeline");
@@ -29,11 +32,36 @@ export default function Timeline() {
 
   function redirect(url) {
     window.open(url, "_blank");
-    console.log("entrou redirect", url);
   }
 
   function BuildPosts(props) {
     const { post } = props;
+    const [likeButton, setLikeButton] = useState("heart-outline")
+
+    function like () {
+      if (likeButton == "heart") {
+        const dislikeAxios = axios.post(`http://localhost:4000/timeline/${post.postId}/dislike`, {userId: data.id});
+          
+        dislikeAxios.then(() => {
+          setLikeButton("heart-outline")
+        });
+
+        dislikeAxios.catch((err) => {
+          console.log(err)
+        });
+
+      } else {
+        const likeAxios = axios.post(`http://localhost:4000/timeline/${post.postId}/like`, {userId: data.id});
+        
+        likeAxios.then(() => {
+          setLikeButton("heart")
+        });
+
+        likeAxios.catch((err) => {
+          console.log(err)
+        });  
+      }
+    }
 
     return (
       <>
@@ -42,7 +70,10 @@ export default function Timeline() {
             <div className="profilePicture">
               <img src={`${post.pictureUrl}`} />
             </div>
-            <p>20 likes</p>
+
+            <ion-icon name={likeButton} className={likeButton == "heart-outline" ? "likeEmpty" : "likeRed" }  onClick={() => like()} />
+
+            <p>{post.likes} likes</p>
           </div>
           <div className="column2">
             <div className="profileName">
@@ -156,6 +187,7 @@ const PostStyle = styled.div`
   .column1 {
     display: flex;
     flex-direction: column;
+    align-items: center;
     width: 50px;
     margin-left: 16px;
     margin-top: 18px;
@@ -166,6 +198,23 @@ const PostStyle = styled.div`
     flex-direction: column;
     margin-left: 18px;
     margin-top: 18px;
+  }
+
+  ion-icon {
+    font-size: 20px;
+    margin-top: 20px;
+    color: #ffffff;
+    fill: red;
+  }
+
+  .column1 > p {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    text-align: center;
+    color: #FFFFFF;
   }
 
   .profilePicture {
