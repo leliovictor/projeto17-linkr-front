@@ -1,14 +1,19 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
-import { FiTrash } from "react-icons/fi";
 
+import UserContext from "../contexts/UserContext";
 import Header from "./Header";
 import NewPost from "./NewPost";
+import DeletePost from "./DeletePost";
 
 export default function Timeline() {
+  const { data } = useContext(UserContext);
+
   const [postData, setPostData] = useState([]);
+
+  const [refreshPage, setRefreshPage] = useState(false);
 
   useEffect(() => {
     const receive = axios.get("http://localhost:4000/timeline");
@@ -26,7 +31,7 @@ export default function Timeline() {
       );
       console.log(err);
     });
-  }, []);
+  }, [refreshPage]);
 
   function redirect(url) {
     window.open(url, "_blank");
@@ -59,7 +64,11 @@ export default function Timeline() {
               <img src={post.urlInfo.image} />
             </div>
           </div>
-          <TrashCanIcon onClick={()=>renderModalDelete(post.id)}/>
+          {data.userId === post.userId ? (
+            <DeletePost postId={post.id} setPostData={setPostData} refreshPage={refreshPage} setRefreshPage={setRefreshPage}/>
+          ) : (
+            <></>
+          )}
         </PostStyle>
       </>
     );
@@ -73,16 +82,6 @@ export default function Timeline() {
         ))}
       </>
     );
-  }
-
-  function renderModalDelete() {
-    console.log('render modal com butões.. children props pra isso?');
-    //ver no trackit como foi feito essa parte
-  }
-  function deletePost(id) {
-   console.log('delete' + id);
-    
-
   }
 
   return (
@@ -335,14 +334,4 @@ const PostStyle = styled.div`
       color: #cecece;
     }
   }
-`;
-
-const TrashCanIcon = styled(FiTrash)`
-  position: absolute;
-  top: 23px;
-  right: 23px;
-  color: #FFFFFF;
-  font-size: 20px;
-  fill: #FFFFFF;
-  cursor: pointer;
 `;
