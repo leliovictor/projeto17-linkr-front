@@ -10,8 +10,6 @@ import NewPost from "./NewPost";
 import BuildPosts from "./Posts"
 
 export default function Timeline() {
-  const { data } = useContext(UserContext);
-
   const [postData, setPostData] = useState([]);
   const { data } = useContext(UserContext);
 
