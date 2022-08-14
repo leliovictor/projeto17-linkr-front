@@ -81,6 +81,10 @@ const Title = styled.div`
   h1 {
     width: 611px;
   }
+
+  @media (max-width: 580px) {
+    margin-left: 18px;
+  }
 `;
 
 const TimelineStyle = styled.div`

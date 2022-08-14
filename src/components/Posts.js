@@ -1,10 +1,14 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import ReactTooltip from "react-tooltip";
+import { Link } from "react-router-dom";
+
+import UserContext from "../contexts/UserContext";
 
 export default function BuildPosts(props) {
     const { post, data } = props;
+    const { setUserPostName } = useContext(UserContext);
     const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
     const [likeButton, setLikeButton] = useState("heart-outline");
     const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
@@ -73,31 +77,35 @@ export default function BuildPosts(props) {
         window.open(url, "_blank");
     };
 
+    function redirectUserPageContext () {
+      setUserPostName({userId: post.userId, username: post.username})
+    };
+
     return (
         <>
-        <PostStyle>
-            <div className="column1">
-                <div className="profilePicture">
-                    <img src={`${post.pictureUrl}`} alt="" />
-                </div>
-                <ion-icon name={likeButton} onClick={() => like()} />
-                <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
-            </div>
-            <div className="column2">
-                <div className="profileName">
-                    <p>{post.username}</p>
-                </div>
-                <div className="postMessage">
-                    <p>{post.message}</p>
-                </div>
-                <div onClick={() => redirect(post.url)} className="link">
-                    <p>{post.urlInfo.title}</p>
-                    <p>{post.urlInfo.description}</p>
-                    <p>{post.url}</p>
-                    <img src={post.urlInfo.image} alt="" />
-                </div>
-            </div>
-        </PostStyle>
+          <PostStyle>
+              <div className="column1">
+                  <div className="profilePicture">
+                      <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()} ><img src={`${post.pictureUrl}`} alt="" /></LinkStyle>
+                  </div>
+                  <ion-icon name={likeButton} onClick={() => like()} />
+                  <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
+              </div>
+              <div className="column2">
+                  <div className="profileName">
+                    <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()}><p>{post.username}</p></LinkStyle>
+                  </div>
+                  <div className="postMessage">
+                      <p>{post.message}</p>
+                  </div>
+                  <div onClick={() => redirect(post.url)} className="link">
+                      <p>{post.urlInfo.title}</p>
+                      <p>{post.urlInfo.description}</p>
+                      <p>{post.url}</p>
+                      <img src={post.urlInfo.image} alt="" />
+                  </div>
+              </div>
+          </PostStyle>
         </>
     );
 };
@@ -165,7 +173,6 @@ const PostStyle = styled.div`
     font-weight: 400;
     font-size: 19px;
     line-height: 23px;
-    color: #ffffff;
     max-width: 502px;
     margin-bottom: 7px;
   }
@@ -299,4 +306,9 @@ const PostStyle = styled.div`
       color: #cecece;
     }
   }
+`;
+
+const LinkStyle = styled(Link)`
+    text-decoration: none;
+    color: #FFFFFF;
 `;
