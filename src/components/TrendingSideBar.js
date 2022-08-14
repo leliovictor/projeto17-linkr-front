@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function TrendingSideBar() {
     const [ trendingList, setTrendingList] = useState([])
-    const { setHashtagName} = useContext(UserContext);
+    const { data, setHashtagName} = useContext(UserContext);
     const navigate = useNavigate();
 
     const { config }  = data
       
       useEffect(()=>{
 
-      const promise = axios.get("http://localhost:4000/timeline", config)
+      const promise = axios.get("http://localhost:4000/hashtags", config)
       
       promise
       .then(res =>{
