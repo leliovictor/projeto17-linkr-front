@@ -5,33 +5,35 @@ import UserContext from "../contexts/UserContext.js";
 import { useNavigate } from "react-router-dom";
 
 export default function TrendingSideBar() {
-    const { data } = useContext(UserContext);
     const [ trendingList, setTrendingList] = useState([])
+    const { setHashtagName} = useContext(UserContext);
     const navigate = useNavigate();
 
     const { config }  = data
-    useEffect(()=>{
+      
+      useEffect(()=>{
 
-    const promise = axios.get("http://localhost:4000/timeline", config)
-    
-    promise
-    .then(res =>{
-      setTrendingList(res.data);
-    })
-    .catch(err=> {alert("Erro ao gerar a trending");
-    });
-    }, []);
+      const promise = axios.get("http://localhost:4000/timeline", config)
+      
+      promise
+      .then(res =>{
+        setTrendingList(res.data);
+      })
+      .catch(err=> {alert("Erro ao gerar a trending");
+      });
+      }, []);
 
-    function Hashtag({hashtagName, hashtag}){
+    function Hashtag({hashtagClicked, hashtag}){
       return(
        <>
-        <span onClick={() => redirectHashtagPage({hashtagName})} ># {hashtag}</span>
+        <span onClick={() => redirectHashtagPage({hashtagClicked})} ># {hashtag}</span>
        </>
       )
     }
 
-    function redirectHashtagPage({hashtagName}){
-      navigate(`/hashtag/${hashtagName}`)
+    function redirectHashtagPage({hashtagClicked}){
+      setHashtagName(hashtagClicked)
+      navigate(`/hashtag/${hashtagClicked}`)
     }
 
   return(
@@ -39,7 +41,7 @@ export default function TrendingSideBar() {
       <SideBar>
         <h1>treding</h1>
         <div>
-          {trendingList.map(hashtag => <Hashtag hashtagName={hashtag.hashtag} hashtag={hashtag.hashtag}></Hashtag>)}
+          {trendingList.map(hashtag => <Hashtag hashtagClicked={hashtag.hashtag} hashtag={hashtag.hashtag}></Hashtag>)}
         </div>
       </SideBar>
     </>

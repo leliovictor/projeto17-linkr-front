@@ -9,7 +9,7 @@ import TrendingSideBar from "./TrendingSideBar";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
-
+  
   useEffect(() => {
     const receive = axios.get("http://localhost:4000/timeline");
     receive.then((response) => {
