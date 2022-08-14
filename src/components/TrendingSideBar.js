@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function TrendingSideBar() {
     const [ trendingList, setTrendingList] = useState([])
-    const { setHashtagName} = useContext(UserContext);
+    const { data, setHashtagName} = useContext(UserContext);
     const navigate = useNavigate();
 
     const { config }  = data

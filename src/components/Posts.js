@@ -140,6 +140,7 @@ const PostStyle = styled.div`
     margin-top: 20px;
     color: #ffffff;
     fill: red;
+    cursor: pointer;
   }
 
   .column1 > p {

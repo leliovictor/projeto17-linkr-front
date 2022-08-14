@@ -77,17 +77,18 @@ export default function Timeline() {
   );
 }
 const Container = styled.div`
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
 `
 const LeftContainer = styled.div`
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
 `
 const RightContainer = styled.div`
-  margin-left:25px;
+  margin-left: 25px;
   @media (max-width: 560px) {
-    display:none;
+    display: none;
   }
   
 `
