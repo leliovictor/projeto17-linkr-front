@@ -4,14 +4,16 @@ import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
 
+import UserContext from "../contexts/UserContext";
 import Header from "./Header";
 import NewPost from "./NewPost";
 import BuildPosts from "./Posts"
-import UserContext from "../contexts/UserContext";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
   const { data } = useContext(UserContext);
+
+  const [refreshPage, setRefreshPage] = useState(false);
 
   useEffect(() => {
     const receive = axios.get("http://localhost:4000/timeline");
@@ -29,7 +31,7 @@ export default function Timeline() {
       );
       console.log(err);
     });
-  }, []);
+  }, [refreshPage]);
 
   function RenderPosts() {
     return (
