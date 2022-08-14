@@ -11,7 +11,7 @@ import UserPage from "./UserPage";
 
 export default function App() {
   const [data, setData] = useState({});
-  const [userPostName, setUserPostName] = useState({});
+  const [userPostName, setUserPostName] = useState();
 
   return (
     <UserContext.Provider value={{ data, setData, userPostName, setUserPostName }}>

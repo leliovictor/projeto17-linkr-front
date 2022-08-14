@@ -1,11 +1,14 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import ReactTooltip from "react-tooltip";
 import { Link } from "react-router-dom";
 
+import UserContext from "../contexts/UserContext";
+
 export default function BuildPosts(props) {
     const { post, data } = props;
+    const { setUserPostName } = useContext(UserContext);
     const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
     const [likeButton, setLikeButton] = useState("heart-outline");
     const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
@@ -74,19 +77,23 @@ export default function BuildPosts(props) {
         window.open(url, "_blank");
     };
 
+    function redirectUserPageContext () {
+      setUserPostName({userId: post.userId, username: post.username})
+    };
+
     return (
         <>
           <PostStyle>
               <div className="column1">
                   <div className="profilePicture">
-                      <LinkStyle to={`/user/${post.userId}`}><img src={`${post.pictureUrl}`} alt="" /></LinkStyle>
+                      <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()} ><img src={`${post.pictureUrl}`} alt="" /></LinkStyle>
                   </div>
                   <ion-icon name={likeButton} onClick={() => like()} />
                   <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
               </div>
               <div className="column2">
                   <div className="profileName">
-                    <LinkStyle to={`/user/${post.userId}`}><p>{post.username}</p></LinkStyle>
+                    <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()}><p>{post.username}</p></LinkStyle>
                   </div>
                   <div className="postMessage">
                       <p>{post.message}</p>

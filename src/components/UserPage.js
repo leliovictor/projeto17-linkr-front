@@ -10,13 +10,10 @@ import UserContext from "../contexts/UserContext";
 
 export default function UserPage() {
     const [userPostData, setUserPostData] = useState([]);
-    const { data } = useContext(UserContext);
-
-    console.log("data: ", data)
-    
+    const { data, userPostName } = useContext(UserContext);
 
     useEffect(() => {
-        const receive = axios.get("http://localhost:4000/user/1");
+        const receive = axios.get(`http://localhost:4000/user/${userPostName.userId}`);
         receive.then((response) => {
             setUserPostData(response.data);
     
@@ -44,13 +41,11 @@ export default function UserPage() {
         );
       };
 
-      console.log("userPostData", userPostData)
-
     return (
         <>
             <Header />
             <Title>
-                <h1>nome do usuario</h1>
+                <h1>{userPostName.username}'s posts</h1>
             </Title>
             <UserPageStyle>
                 <div className="userPosts">
@@ -70,7 +65,6 @@ export default function UserPage() {
         </>
     )
 };
-
 
 const Title = styled.div`
   font-family: "Oswald";
