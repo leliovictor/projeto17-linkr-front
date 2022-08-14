@@ -13,7 +13,7 @@ export default function TrendingSideBar() {
       
       useEffect(()=>{
 
-      const promise = axios.get("http://localhost:4000/timeline", config)
+      const promise = axios.get("http://localhost:4000/hashtags", config)
       
       promise
       .then(res =>{
