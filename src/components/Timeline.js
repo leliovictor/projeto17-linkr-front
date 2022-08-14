@@ -7,12 +7,12 @@ import ReactTooltip from "react-tooltip";
 import UserContext from "../contexts/UserContext";
 import Header from "./Header";
 import NewPost from "./NewPost";
+import TrendingSideBar from "./TrendingSideBar";
 import BuildPosts from "./Posts"
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
   const { data } = useContext(UserContext);
-
   const [refreshPage, setRefreshPage] = useState(false);
 
   useEffect(() => {
@@ -50,26 +50,47 @@ export default function Timeline() {
       <Title>
         <h1>timeline</h1>
       </Title>
-      <NewPost />
-      <TimelineStyle>
-        <div className="timeline">
-          {postData.length !== 0 ? (
-            <RenderPosts />
-          ) : (
-            <RotatingLines
-              strokeColor="grey"
-              strokeWidth="5"
-              animationDuration="0.75"
-              width="96"
-              visible={true}
-            />
-          )}
-        </div>
-      </TimelineStyle>
+      <Container>
+        <LeftContainer>
+            <NewPost />
+            <TimelineStyle>
+              <div className="timeline">
+                {postData.length !== 0 ? (
+                  <RenderPosts />
+                ) : (
+                  <RotatingLines
+                    strokeColor="grey"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    width="96"
+                    visible={true}
+                  />
+                )}
+              </div>
+            </TimelineStyle>
+        </LeftContainer>
+        <RightContainer>
+          <TrendingSideBar />
+        </RightContainer>
+      </Container>
     </>
   );
 }
-
+const Container = styled.div`
+  display:flex;
+  justify-content:center;
+`
+const LeftContainer = styled.div`
+  display:flex;
+  flex-direction:column;
+`
+const RightContainer = styled.div`
+  margin-left:25px;
+  @media (max-width: 560px) {
+    display:none;
+  }
+  
+`
 const Title = styled.div`
   font-family: "Oswald";
   font-weight: 700;
@@ -112,7 +133,7 @@ const TimelineStyle = styled.div`
     margin-bottom: 43px;
   }
 
-  @media (max-width: 580px) {
+  @media (max-width: 560px) {
     .timeline {
       width: 100%;
     }
