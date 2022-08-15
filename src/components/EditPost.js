@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState, useImperativeHandle  } from "
 export default function EditPost({ postId}) {
     //const [visible, setVisible] = useState(false)
     const [ click, setClick] = useState(false)
-    const inputRef = useRef()
+    const inputRef = useRef(null)
 
     /*
     function AcessingElement() {
@@ -25,8 +25,7 @@ export default function EditPost({ postId}) {
         inputRef.current.focus()
         //console.log("acessando testando: ", inputRef.current, "focus: ", inputRef.current.focus())
 
-        inputRef.current = "mudando valor"
-
+       
         console.log("novo valor?: ", inputRef.current)
 
 
@@ -40,7 +39,7 @@ export default function EditPost({ postId}) {
 
     return (
         <>
-            <input ref={inputRef} />
+            <input type="text" ref={inputRef}/>
             <ion-icon name="pencil-outline" onClick={() => setClick(true)}></ion-icon>
         </>
     )
