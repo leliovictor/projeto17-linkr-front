@@ -90,6 +90,8 @@ export default function BuildPosts(props) {
         cursor: 'pointer'
       };
 
+      console.log(tagStyle);
+
     return (
         <>
           <PostStyle>
