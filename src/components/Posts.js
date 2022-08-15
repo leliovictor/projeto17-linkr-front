@@ -2,13 +2,14 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import ReactTooltip from "react-tooltip";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
+import { ReactTagify } from "react-tagify";
 
 export default function BuildPosts(props) {
+    const navigate = useNavigate();
     const { post, data } = props;
-    const { setUserPostName } = useContext(UserContext);
+    const { setUserPostName, setHashtagName } = useContext(UserContext);
     const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
     const [likeButton, setLikeButton] = useState("heart-outline");
     const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
@@ -81,6 +82,13 @@ export default function BuildPosts(props) {
       setUserPostName({userId: post.userId, username: post.username})
     };
 
+    const tagStyle = {
+      
+        color: '#FFFFFF',
+        fontWeight: 700,
+        cursor: 'pointer'
+      };
+
     return (
         <>
           <PostStyle>
@@ -96,7 +104,9 @@ export default function BuildPosts(props) {
                     <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()}><p>{post.username}</p></LinkStyle>
                   </div>
                   <div className="postMessage">
-                      <p>{post.message}</p>
+                      <ReactTagify tagStyle={tagStyle} tagClicked={(tag)=> {setHashtagName(tag.slice(1)); navigate(`/hashtag/${tag.slice(1)}`)}}>
+                         <p>{post.message}</p>              
+                      </ReactTagify>
                   </div>
                   <div onClick={() => redirect(post.url)} className="link">
                       <p>{post.urlInfo.title}</p>
@@ -108,7 +118,7 @@ export default function BuildPosts(props) {
           </PostStyle>
         </>
     );
-};
+    }
 
 const PostStyle = styled.div`
   width: 611px;
@@ -133,8 +143,9 @@ const PostStyle = styled.div`
     flex-direction: column;
     margin-left: 18px;
     margin-top: 18px;
-  }
 
+  }
+  
   ion-icon {
     font-size: 20px;
     margin-top: 20px;
