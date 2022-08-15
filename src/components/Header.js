@@ -2,7 +2,9 @@ import { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import { IoIosArrowUp } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+
 import UserContext from "../contexts/UserContext";
+import SearchUser from "./SearchUser";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ export default function Header() {
   return (
     <Content>
       <Title>linkr</Title>
+      <SearchUser />
       <LogoutDiv>
         <section onClick={showLogoutButton}>
           <ArrowUp rotate={logoutButton ? "180deg" : "0"} />
@@ -67,6 +70,7 @@ const Content = styled.div`
   width: 100%;
   height: 72px;
   background: #151515;
+  position: relative;
 
   display: flex;
   justify-content: space-between;
