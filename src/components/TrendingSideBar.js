@@ -10,18 +10,20 @@ export default function TrendingSideBar() {
     const navigate = useNavigate();
 
     const { config }  = data
-      
-      useEffect(()=>{
-
-      const promise = axios.get("http://localhost:4000/hashtags", config)
-      
-      promise
-      .then(res =>{
-        setTrendingList(res.data);
-      })
-      .catch(err=> {alert("Erro ao gerar a trending");
-      });
-      }, []);
+    
+    useEffect(() => {
+      if (config) {
+        const promise = axios.get("http://localhost:4000/hashtags", config);
+  
+        promise
+          .then((res) => {
+            setTrendingList(res.data);
+          })
+          .catch((err) => {
+            alert("Erro ao gerar a trending");
+          });
+      }
+    }, [refreshPage]);
 
     function Hashtag({hashtag}){
       return(
