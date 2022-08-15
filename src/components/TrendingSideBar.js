@@ -4,24 +4,29 @@ import { useState, useContext, useEffect } from "react";
 import UserContext from "../contexts/UserContext.js";
 import { useNavigate } from "react-router-dom";
 
-export default function TrendingSideBar() {
+export default function  TrendingSideBar() {
     const [ trendingList, setTrendingList] = useState([])
     const { data, setHashtagName} = useContext(UserContext);
     const navigate = useNavigate();
 
     const { config }  = data
-      
-      useEffect(()=>{
+    console.log("config: ", config)
+    console.log("data: ", data)
 
-      const promise = axios.get("http://localhost:4000/hashtags", config)
       
-      promise
-      .then(res =>{
-        setTrendingList(res.data);
-      })
-      .catch(err=> {alert("Erro ao gerar a trending");
-      });
-      }, []);
+    useEffect(()=>{
+      if (config) {
+        const promise =  axios.get("http://localhost:4000/hashtags", config)
+        console.log("chegue aqui hashtags")
+        
+        promise
+        .then(res =>{
+          setTrendingList(res.data);
+        })
+        .catch(err=> {alert("Erro ao gerar a trending"); console.log("err dentro do cath", err)
+        });
+      }
+    }, []);
 
     function Hashtag({hashtagClicked, hashtag}){
       return(
