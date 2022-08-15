@@ -37,7 +37,7 @@ export default function Timeline() {
     return (
       <>
         {postData.map((post, index) => (
-          <BuildPosts key={index} post={post} data={data}/>
+          <BuildPosts key={index} post={post} data={data} refreshPage={refreshPage} setRefreshPage={setRefreshPage} setPostData={setPostData}/>
         ))}
         <ReactTooltip type="light" place="bottom" effect="solid"/>
       </>
@@ -52,7 +52,7 @@ export default function Timeline() {
       </Title>
       <Container>
         <LeftContainer>
-            <NewPost />
+            <NewPost refreshPage={refreshPage} setRefreshPage={setRefreshPage} setPostData={setPostData} />
             <TimelineStyle>
               <div className="timeline">
                 {postData.length !== 0 ? (
@@ -70,7 +70,7 @@ export default function Timeline() {
             </TimelineStyle>
         </LeftContainer>
         <RightContainer>
-          <TrendingSideBar />
+          <TrendingSideBar refreshPage={refreshPage} />
         </RightContainer>
       </Container>
     </>
@@ -83,6 +83,7 @@ const Container = styled.div`
 const LeftContainer = styled.div`
   display:flex;
   flex-direction:column;
+  height: fit-content;
 `
 const RightContainer = styled.div`
   margin-left:25px;

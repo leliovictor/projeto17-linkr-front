@@ -6,7 +6,7 @@ import { RotatingLines } from "react-loader-spinner";
 
 import UserContext from "../contexts/UserContext";
 
-export default function DeletePost({ postId, refreshPage, setRefreshPage, setPostData }) {
+export default function DeletePost({ postId, refreshPage, setRefreshPage, setPostData}) {
   const { data } = useContext(UserContext);
   const [displayModal, setDisplayModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -126,6 +126,8 @@ const Modal = styled.div`
     line-height: 22px;
     border: none;
     margin: 0 13.5px;
+
+    cursor: pointer;
   }
 `;
 
