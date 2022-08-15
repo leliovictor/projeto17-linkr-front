@@ -3,9 +3,9 @@ import axios from "axios";
 import { useState, useContext } from "react";
 import UserContext from "../contexts/UserContext.js";
 
-export default function NewPost({refreshPage, setRefreshPage}) {
-  const [url, setUrl] = useState();
-  const [message, setMessage] = useState();
+export default function NewPost({refreshPage, setRefreshPage, setPostData}) {
+  const [url, setUrl] = useState("");
+  const [message, setMessage] = useState("");
   const [disableButton,setDisableButton] = useState(false)
   const { data } = useContext(UserContext);
 
@@ -28,6 +28,7 @@ export default function NewPost({refreshPage, setRefreshPage}) {
       setDisableButton(false);
       setUrl('')
       setMessage('')
+      setPostData([])
       setRefreshPage(!refreshPage)
     })
     .catch(err=> {alert("Houve um erro ao publicar seu link");

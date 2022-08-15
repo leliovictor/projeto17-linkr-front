@@ -4,11 +4,12 @@ import { useState, useEffect, useContext } from "react";
 import ReactTooltip from "react-tooltip";
 import { Link, useNavigate } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
+import DeletePost from "./DeletePost";
 import { ReactTagify } from "react-tagify";
 
 export default function BuildPosts(props) {
     const navigate = useNavigate();
-    const { post, data } = props;
+    const { post, data, refreshPage, setRefreshPage, setPostData } = props;
     const { setUserPostName, setHashtagName } = useContext(UserContext);
     const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
     const [likeButton, setLikeButton] = useState("heart-outline");
@@ -115,6 +116,11 @@ export default function BuildPosts(props) {
                       <img src={post.urlInfo.image} alt="" />
                   </div>
               </div>
+              {data.id === post.userId ? (
+            <DeletePost postId={post.postId} setPostData={setPostData} refreshPage={refreshPage} setRefreshPage={setRefreshPage}/>
+          ) : (
+            <></>
+          )}
           </PostStyle>
         </>
     );
@@ -245,6 +251,8 @@ const PostStyle = styled.div`
     font-size: 11px;
     line-height: 13px;
     color: #cecece;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   @media (max-width: 580px) {
