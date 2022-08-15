@@ -55,7 +55,7 @@ export default function LoginPage() {
       setLoading(true);
 
       try {
-        const response = await axios.post("http://localhost:4000/", body);
+        const response = await axios.post("http://localhost:4001/", body);
         registerLogin(response.data, body);
       } catch (err) {
         setLoading(false);

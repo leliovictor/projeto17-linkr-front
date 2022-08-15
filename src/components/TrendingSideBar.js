@@ -11,7 +11,8 @@ export default function TrendingSideBar(props) {
   const navigate = useNavigate();
 
   const { config } = data;
-
+  
+  if (config) {
   useEffect(() => {
     const promise = axios.get("http://localhost:4000/hashtags", config);
 
@@ -22,6 +23,7 @@ export default function TrendingSideBar(props) {
       .catch((err) => {
         alert("Erro ao gerar a trending");
       });
+    }
   }, [refreshPage]);
 
   function Hashtag({ hashtagClicked, hashtag }) {
