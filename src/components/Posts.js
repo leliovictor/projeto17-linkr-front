@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import ReactTooltip from "react-tooltip";
 import { Link } from "react-router-dom";
 
 import UserContext from "../contexts/UserContext";
 import DeletePost from "./DeletePost";
+import EditPost from "./EditPost";
 
 export default function BuildPosts(props) {
     const { post, data, refreshPage, setRefreshPage, setPostData } = props;
@@ -13,6 +14,14 @@ export default function BuildPosts(props) {
     const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
     const [likeButton, setLikeButton] = useState("heart-outline");
     const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
+
+    //////////////////////////
+
+    const [visible, setVisible] = useState(false)
+    const inputRef = useRef(null)
+    const [value, setValue] = useState(inputRef.current)
+
+    //////////////
     let iAmLiked = false;
 
     useEffect(() => {
@@ -81,6 +90,41 @@ export default function BuildPosts(props) {
     function redirectUserPageContext () {
       setUserPostName({userId: post.userId, username: post.username})
     };
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+/*
+    function EditPost() {
+
+      function showInput() {
+        setVisible(true)
+      };
+
+
+      function acessingElement () {
+        inputRef.current.focus()
+        console.log("acessando testando: ", inputRef.current, "focus: ", inputRef.current.focus())
+
+      }
+
+      function sendChanges(e) {
+        e.preventDefault();
+
+
+
+      }
+
+
+
+      return (
+        <>
+          <ion-icon name="pencil-outline" onClick={() => showInput()}></ion-icon>
+        </>
+      )
+    }
+*/
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>
@@ -97,7 +141,8 @@ export default function BuildPosts(props) {
                     <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()}><p>{post.username}</p></LinkStyle>
                   </div>
                   <div className="postMessage">
-                      <p>{post.message}</p>
+                      <p ref={inputRef}>{post.message}</p>
+                      
                   </div>
                   <div onClick={() => redirect(post.url)} className="link">
                       <p>{post.urlInfo.title}</p>
@@ -108,9 +153,14 @@ export default function BuildPosts(props) {
               </div>
               {data.id === post.userId ? (
             <DeletePost postId={post.postId} setPostData={setPostData} refreshPage={refreshPage} setRefreshPage={setRefreshPage}/>
-          ) : (
-            <></>
-          )}
+              ) : (
+                <></>
+              )}
+            {data.id === post.userId ? (
+              <EditPost inputRef={inputRef} postId={post.postId}/>
+              ) : (
+                <></>
+              )}
           </PostStyle>
         </>
     );
