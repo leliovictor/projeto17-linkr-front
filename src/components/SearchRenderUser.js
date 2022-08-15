@@ -1,16 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useContext } from "react";
+
+import UserContext from "../contexts/UserContext";
 
 export default function SearchRenderUser(props) {
   const navigate = useNavigate();
 
+  const { setUsername, setFindUsers } = props;
   const { id, username, pictureUrl } = props.userData;
+  const { setUserPostName } = useContext(UserContext);
 
-  console.log(props);
-
+  function redirectPage() {
+    setUserPostName({ userId: id, username });
+    setUsername("");
+    setFindUsers([]);
+    navigate(`/user/${id}`);
+  }
 
   return (
-    <Content onClick={() => navigate(`/user/${id}`)}>
+    <Content onClick={() => redirectPage()}>
       <img src={pictureUrl} alt="User" />
       <h1>{username}</h1>
     </Content>

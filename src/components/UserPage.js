@@ -28,7 +28,7 @@ export default function UserPage() {
             );
             console.log(err);
         });
-    }, []);
+    }, [userPostName]);
 
     function RenderPosts() {
         return (

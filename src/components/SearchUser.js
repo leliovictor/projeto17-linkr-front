@@ -9,8 +9,11 @@ import SearchRenderUser from "./SearchRenderUser";
 export default function SearchUser() {
   const { data } = useContext(UserContext);
   const [findUsers, setFindUsers] = useState([]);
+  const [username, setUsername] = useState("");
 
   async function searchUserByUsername(str) {
+    setUsername(str);
+
     const body = {
       username: str,
     };
@@ -37,10 +40,11 @@ export default function SearchUser() {
           debounceTimeout={300}
           type="text"
           placeholder="Search for people"
+          value={username}
           onChange={(e) => searchUserByUsername(e.target.value)}
         />
         {findUsers.map((user, index) => {
-          return <SearchRenderUser key={index} userData={user} />;
+          return <SearchRenderUser key={index} userData={user} setUsername={setUsername} setFindUsers={setFindUsers} />;
         })}
       </Content>
     </Position>

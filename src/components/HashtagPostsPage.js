@@ -3,26 +3,24 @@ import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
-
 import Header from "./Header";
 import BuildPosts from "./Posts"
 import UserContext from "../contexts/UserContext";
+import TrendingSideBar from "./TrendingSideBar";
 
 export default function HashtagPostsPage() {
     const [hashtagPostData, setHashtagPostData] = useState([]);
     const { data, hashtagName } = useContext(UserContext);
-    console.log(hashtagName)
-    
+    const { config } = data
+
     useEffect(() => {
-        const receive = axios.get(`http://localhost:4000/user/${hashtagName}`);
+        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}`, config);
         receive.then((response) => {
             setHashtagPostData(response.data);
-    
             if (response.data.length === 0) {
-                console.log(`here are no posts ${hashtagName}`);
+                console.log(`There are no posts with #${hashtagName}`);
             }
         });
-    
         receive.catch((err) => {
             alert(
                 "An error occured while trying to fetch the posts, please refresh the page"
@@ -42,7 +40,6 @@ export default function HashtagPostsPage() {
         );
       };
 
-      console.log("hashtagPostData", hashtagPostData)
 
     return (
         <>
@@ -50,26 +47,47 @@ export default function HashtagPostsPage() {
             <Title>
                 <h1># {hashtagName}</h1>
             </Title>
-            <HashtagPageStyle>
-                <div className="hashagPost">
-                {hashtagPostData.length !== 0 ? (
-                    <RenderPosts />
-                ) : (
-                    <RotatingLines
-                    strokeColor="grey"
-                    strokeWidth="5"
-                    animationDuration="0.75"
-                    width="96"
-                    visible={true}
-                    />
-                )}
-                </div>
-            </HashtagPageStyle>
+            <Container>
+              <LeftContainer>
+                <HashtagPageStyle>
+                    <div className="hashagPost">
+                    {hashtagPostData.length !== 0 ? (
+                        <RenderPosts />
+                    ) : (
+                        <RotatingLines
+                        strokeColor="grey"
+                        strokeWidth="5"
+                        animationDuration="0.75"
+                        width="96"
+                        visible={true}
+                        />
+                    )}
+                    </div>
+                </HashtagPageStyle>
+              </LeftContainer>
+              <RightContainer>
+                <TrendingSideBar />
+              </RightContainer>
+            </Container>
         </>
     )
 };
 
-
+const Container = styled.div`
+  display:flex;
+  justify-content:center;
+`
+const LeftContainer = styled.div`
+  display:flex;
+  flex-direction:column;
+`
+const RightContainer = styled.div`
+  margin-left:25px;
+  @media (max-width: 560px) {
+    display:none;
+  }
+  
+`
 const Title = styled.div`
   font-family: "Oswald";
   font-weight: 700;

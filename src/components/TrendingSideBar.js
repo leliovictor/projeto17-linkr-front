@@ -12,7 +12,7 @@ export default function TrendingSideBar(props) {
   const navigate = useNavigate();
 
   const { config } = data;
-
+  
   useEffect(() => {
     if (config) {
       const promise = axios.get("http://localhost:4000/hashtags", config);
