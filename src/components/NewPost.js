@@ -2,14 +2,12 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useContext } from "react";
 import UserContext from "../contexts/UserContext.js";
-import { useNavigate } from "react-router-dom";
 
-export default function NewPost() {
+export default function NewPost({refreshPage, setRefreshPage}) {
   const [url, setUrl] = useState();
   const [message, setMessage] = useState();
   const [disableButton,setDisableButton] = useState(false)
   const { data } = useContext(UserContext);
-  const navigate = useNavigate();
 
   function submitPublish(event){
     event.preventDefault();
@@ -30,7 +28,7 @@ export default function NewPost() {
       setDisableButton(false);
       setUrl('')
       setMessage('')
-      navigate("/timeline");
+      setRefreshPage(!refreshPage)
     })
     .catch(err=> {alert("Houve um erro ao publicar seu link");
     setDisableButton(false);});

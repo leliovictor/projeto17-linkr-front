@@ -23,7 +23,7 @@ export default function TrendingSideBar() {
       });
       }, []);
 
-    function Hashtag({hashtagClicked, hashtag}){
+    function Hashtag({ hashtagClicked, hashtag}){
       return(
        <>
         <span onClick={() => redirectHashtagPage({hashtagClicked})} ># {hashtag}</span>
@@ -32,7 +32,7 @@ export default function TrendingSideBar() {
     }
 
     function redirectHashtagPage({hashtagClicked}){
-      setHashtagName(hashtagClicked)
+      setHashtagName(hashtagClicked);
       navigate(`/hashtag/${hashtagClicked}`)
     }
 

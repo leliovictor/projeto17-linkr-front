@@ -3,7 +3,6 @@ import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
-
 import Header from "./Header";
 import BuildPosts from "./Posts"
 import UserContext from "../contexts/UserContext";
@@ -14,12 +13,12 @@ export default function HashtagPostsPage() {
     console.log(hashtagName)
     
     useEffect(() => {
-        const receive = axios.get(`http://localhost:4000/user/${hashtagName}`);
+        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}`);
         receive.then((response) => {
             setHashtagPostData(response.data);
     
             if (response.data.length === 0) {
-                console.log(`here are no posts ${hashtagName}`);
+                console.log(`There are no posts with #${hashtagName}`);
             }
         });
     

@@ -52,7 +52,7 @@ export default function Timeline() {
       </Title>
       <Container>
         <LeftContainer>
-            <NewPost />
+            <NewPost refreshPage={refreshPage} setRefreshPage={setRefreshPage}/>
             <TimelineStyle>
               <div className="timeline">
                 {postData.length !== 0 ? (
