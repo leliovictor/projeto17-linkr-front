@@ -47,7 +47,7 @@ export default function Header() {
 
   return (
     <Content>
-      <Title>linkr</Title>
+      <Title onClick={() => navigate("/timeline")}>linkr</Title>
       <SearchUser />
       <LogoutDiv>
         <section onClick={showLogoutButton}>
@@ -87,6 +87,7 @@ const Title = styled.h1`
   padding-left: 28px;
 
   color: #ffffff;
+  cursor: pointer;
 `;
 
 const LogoutDiv = styled.div`

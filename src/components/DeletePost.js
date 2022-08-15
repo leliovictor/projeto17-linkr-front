@@ -15,7 +15,7 @@ export default function DeletePost({ postId, refreshPage, setRefreshPage, setPos
     setLoading(true);
 
     try {
-      await axios.delete(`http://localhost:4000/posts/${postId}`, data.config);
+      await axios.delete(`https://projeto17--linkr--backend.herokuapp.com/posts/${postId}`, data.config);
 
       setPostData([]);
       setRefreshPage(!refreshPage);

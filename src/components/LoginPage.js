@@ -24,7 +24,7 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await axios.post("http://localhost:4000/", body);
+      const response = await axios.post("https://projeto17--linkr--backend.herokuapp.com/", body);
 
       registerLogin(response.data, body);
     } catch (err) {
@@ -33,8 +33,6 @@ export default function LoginPage() {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////--- MUDAR O NAVIGATE ABAIXO PARA PAGINA QUE ESTA TRABAHANDO ---///
   function registerLogin(data, body) {
     setData({ ...data });
     saveLoginInLocalStorage(body);
@@ -55,7 +53,7 @@ export default function LoginPage() {
       setLoading(true);
 
       try {
-        const response = await axios.post("http://localhost:4000/", body);
+        const response = await axios.post("https://projeto17--linkr--backend.herokuapp.com/", body);
         registerLogin(response.data, body);
       } catch (err) {
         setLoading(false);

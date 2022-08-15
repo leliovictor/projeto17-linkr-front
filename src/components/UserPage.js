@@ -13,7 +13,7 @@ export default function UserPage() {
     const { data, userPostName } = useContext(UserContext);
 
     useEffect(() => {
-        const receive = axios.get(`http://localhost:4000/user/${userPostName.userId}`);
+        const receive = axios.get(`https://projeto17--linkr--backend.herokuapp.com/user/${userPostName.userId}`);
         receive.then((response) => {
             setUserPostData(response.data);
     

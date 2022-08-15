@@ -16,7 +16,7 @@ export default function Timeline() {
   const [refreshPage, setRefreshPage] = useState(false);
 
   useEffect(() => {
-    const receive = axios.get("http://localhost:4000/timeline");
+    const receive = axios.get("https://projeto17--linkr--backend.herokuapp.com/timeline");
     receive.then((response) => {
       setPostData(response.data);
 

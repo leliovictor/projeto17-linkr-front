@@ -15,7 +15,7 @@ export default function TrendingSideBar(props) {
   useEffect(() => {
     if (config) {
 
-    const promise = axios.get("http://localhost:4000/hashtags", config);
+    const promise = axios.get("https://projeto17--linkr--backend.herokuapp.com/hashtags", config);
 
     promise
       .then((res) => {
