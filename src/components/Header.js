@@ -15,7 +15,7 @@ export default function Header() {
       navigate("/");
     }
   }
-  useEffect(() => checkToken(), []);
+  useEffect(() => checkToken());
 
   const [logoutButton, setLogoutButton] = useState(false);
 
@@ -26,7 +26,7 @@ export default function Header() {
 
   useEffect(() => {
     if (logoutButton) window.addEventListener("click", clickListener);
-  }, [logoutButton]);
+  });
 
   function clickListener(event) {
     const classString = event.target.className;
@@ -85,9 +85,14 @@ const Title = styled.h1`
 
   letter-spacing: 0.05em;
   padding-left: 28px;
+  padding-right: 30px;
 
   color: #ffffff;
   cursor: pointer;
+
+  @media (max-width: 560px) {
+    padding-left: 17px;
+  }
 `;
 
 const LogoutDiv = styled.div`

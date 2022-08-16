@@ -6,8 +6,8 @@ import { RotatingLines } from "react-loader-spinner";
 
 import UserContext from "../contexts/UserContext";
 
-export default function DeletePost({ postId, refreshPage, setRefreshPage, setPostData}) {
-  const { data } = useContext(UserContext);
+export default function DeletePost({ postId }) {
+  const { data, refreshKey, setRefreshKey } = useContext(UserContext);
   const [displayModal, setDisplayModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -15,10 +15,12 @@ export default function DeletePost({ postId, refreshPage, setRefreshPage, setPos
     setLoading(true);
 
     try {
-      await axios.delete(`https://projeto17--linkr--backend.herokuapp.com/posts/${postId}`, data.config);
+      await axios.delete(
+        `https://projeto17--linkr--backend.herokuapp.com/posts/${postId}`,
+        data.config
+      );
 
-      setPostData([]);
-      setRefreshPage(!refreshPage);
+      setRefreshKey(!refreshKey);
     } catch (err) {
       alert("Error: post was not deleted");
       setLoading(false);
