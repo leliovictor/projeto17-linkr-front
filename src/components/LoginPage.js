@@ -9,6 +9,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [reloadPage, setReloadPage] = useState(false);
+
 
   const navigate = useNavigate();
   const { setData } = useContext(UserContext);
@@ -33,10 +35,8 @@ export default function LoginPage() {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////--- MUDAR O NAVIGATE ABAIXO PARA PAGINA QUE ESTA TRABAHANDO ---///
   function registerLogin(data, body) {
-    setData({ ...data });
+    setData({ ...data, reloadPage, setReloadPage });
     saveLoginInLocalStorage(body);
 
     navigate("/timeline");
@@ -55,7 +55,7 @@ export default function LoginPage() {
       setLoading(true);
 
       try {
-        const response = await axios.post("https://projeto17--linkr--backend.herokuapp.com/", body);
+        const response = await axios.post("http://localhost:4000/", body);
         registerLogin(response.data, body);
       } catch (err) {
         setLoading(false);
@@ -63,7 +63,7 @@ export default function LoginPage() {
     }
   }
 
-  useEffect(() => checkLocalStorageToLogin(), []);
+  useEffect(() => checkLocalStorageToLogin());
 
   return (
     <Content>

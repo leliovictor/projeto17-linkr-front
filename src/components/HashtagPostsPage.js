@@ -14,7 +14,7 @@ export default function HashtagPostsPage() {
     const { config } = data
 
     useEffect(() => {
-        const receive = axios.get(`https://projeto17--linkr--backend.herokuapp.com/hashtag/${hashtagName}`, config);
+        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}`, config);
         receive.then((response) => {
             setHashtagPostData(response.data);
             if (response.data.length === 0) {

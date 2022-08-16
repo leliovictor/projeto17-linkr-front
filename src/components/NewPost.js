@@ -3,11 +3,11 @@ import axios from "axios";
 import { useState, useContext } from "react";
 import UserContext from "../contexts/UserContext.js";
 
-export default function NewPost({refreshPage, setRefreshPage, setPostData}) {
+export default function NewPost() {
   const [url, setUrl] = useState("");
   const [message, setMessage] = useState("");
   const [disableButton,setDisableButton] = useState(false)
-  const { data } = useContext(UserContext);
+  const { data, refreshKey, setRefreshKey } = useContext(UserContext);
 
   function submitPublish(event){
     event.preventDefault();
@@ -21,15 +21,14 @@ export default function NewPost({refreshPage, setRefreshPage, setPostData}) {
             
     const { config }  = data
     
-    const promise = axios.post("https://projeto17--linkr--backend.herokuapp.com/posts", newPost, config)
+    const promise = axios.post("http://localhost:4000/posts", newPost, config)
     
     promise
     .then(res =>{
       setDisableButton(false);
       setUrl('')
       setMessage('')
-      setPostData([])
-      setRefreshPage(!refreshPage)
+      setRefreshKey(!refreshKey);
     })
     .catch(err=> {alert("Houve um erro ao publicar seu link");
     setDisableButton(false);});
@@ -94,6 +93,9 @@ const UserAvatar = styled.div`
     width:50px;
     height:50px;
   }
+  @media (max-width: 560px) {
+    display: none;
+  }
 `
 const Form = styled.form`
     display:flex;
@@ -143,6 +145,10 @@ const Form = styled.form`
         width:100%;
         width:100%;
         justify-content:flex-end;
+    }
+
+    @media (max-width: 560px) {
+      padding: 0 15px;
     }
       
 `

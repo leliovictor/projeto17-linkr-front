@@ -4,10 +4,9 @@ import { useState, useContext, useEffect } from "react";
 import UserContext from "../contexts/UserContext.js";
 import { useNavigate } from "react-router-dom";
 
-export default function TrendingSideBar(props) {
-  const { refreshPage } = props;
+export default function TrendingSideBar() {
   const [trendingList, setTrendingList] = useState([]);
-  const { data, setHashtagName } = useContext(UserContext);
+  const { data, setHashtagName, refreshKey } = useContext(UserContext);
   const navigate = useNavigate();
 
   const { config } = data;
@@ -25,7 +24,7 @@ export default function TrendingSideBar(props) {
         alert("Erro ao gerar a trending");
       });
     }
-  }, [refreshPage]);
+  }, [refreshKey]);
 
   function Hashtag({ hashtagClicked, hashtag }) {
     return (

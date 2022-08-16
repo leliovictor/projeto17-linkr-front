@@ -22,7 +22,7 @@ export default function SearchUser() {
 
     try {
       const response = await axios.post(
-        "https://projeto17--linkr--backend.herokuapp.com/user/search",
+        "http://localhost:4000/user/search",
         body,
         data.config
       );
@@ -56,6 +56,13 @@ const Position = styled.div`
   width: 100%;
   max-width: 560px;
   height: 45px;
+  @media (max-width: 560px) {
+    position: absolute;
+    top: 82px;
+    width: 93%;
+    margin-left: 17px;
+
+  }
 `;
 
 const Content = styled.div`
