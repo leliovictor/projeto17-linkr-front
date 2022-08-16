@@ -21,7 +21,7 @@ export default function NewPost({refreshPage, setRefreshPage, setPostData}) {
             
     const { config }  = data
     
-    const promise = axios.post("http://localhost:4000/posts", newPost, config)
+    const promise = axios.post("https://projeto17--linkr--backend.herokuapp.com/posts", newPost, config)
     
     promise
     .then(res =>{

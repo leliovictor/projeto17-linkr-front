@@ -50,7 +50,7 @@ export default function BuildPosts(props) {
 
     function like () {
         if (likeButton === "heart") {
-            const dislikeAxios = axios.post(`http://localhost:4000/timeline/${post.postId}/dislike`, {userId: data.id});
+            const dislikeAxios = axios.post(`https://projeto17--linkr--backend.herokuapp.com/timeline/${post.postId}/dislike`, {userId: data.id});
                 
             dislikeAxios.then(() => {
                 setLikeButton("heart-outline")
@@ -62,7 +62,7 @@ export default function BuildPosts(props) {
             });
 
         } else {
-            const likeAxios = axios.post(`http://localhost:4000/timeline/${post.postId}/like`, {userId: data.id});
+            const likeAxios = axios.post(`https://projeto17--linkr--backend.herokuapp.com/timeline/${post.postId}/like`, {userId: data.id});
             
             likeAxios.then(() => {
                 setLikeButton("heart")
