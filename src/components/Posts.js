@@ -9,7 +9,7 @@ import { ReactTagify } from "react-tagify";
 
 export default function BuildPosts(props) {
   const navigate = useNavigate();
-  const { post, data, refreshPage, setRefreshPage, setPostData } = props;
+  const { post, data } = props;
   const { setUserPostName, setHashtagName } = useContext(UserContext);
   const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
   const [likeButton, setLikeButton] = useState("heart-outline");
@@ -148,9 +148,6 @@ export default function BuildPosts(props) {
         {data.id === post.userId ? (
           <DeletePost
             postId={post.postId}
-            setPostData={setPostData}
-            refreshPage={refreshPage}
-            setRefreshPage={setRefreshPage}
           />
         ) : (
           <></>

@@ -9,6 +9,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [reloadPage, setReloadPage] = useState(false);
+
 
   const navigate = useNavigate();
   const { setData } = useContext(UserContext);
@@ -34,7 +36,7 @@ export default function LoginPage() {
   }
 
   function registerLogin(data, body) {
-    setData({ ...data });
+    setData({ ...data, reloadPage, setReloadPage });
     saveLoginInLocalStorage(body);
 
     navigate("/timeline");
@@ -61,7 +63,7 @@ export default function LoginPage() {
     }
   }
 
-  useEffect(() => checkLocalStorageToLogin(), []);
+  useEffect(() => checkLocalStorageToLogin());
 
   return (
     <Content>
