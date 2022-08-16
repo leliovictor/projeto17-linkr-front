@@ -8,7 +8,6 @@ import DeletePost from "./DeletePost";
 import { ReactTagify } from "react-tagify";
 
 export default function BuildPosts(props) {
-  export default function BuildPosts(props) {
     const navigate = useNavigate();
     const { post, data, refreshPage, setRefreshPage, setPostData } = props;
     const { setUserPostName, setHashtagName } = useContext(UserContext);
@@ -351,9 +350,9 @@ const PostStyle = styled.div`
       color: #cecece;
     }
   }
-`;
+`
 
 const LinkStyle = styled(Link)`
   text-decoration: none;
   color: #ffffff;
-`;
+`
