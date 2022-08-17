@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function TrendingSideBar() {
   const [trendingList, setTrendingList] = useState([]);
-  const { data, setHashtagName, refreshKey } = useContext(UserContext);
+  const { data, setHashtagName, refreshKey, setRefreshKey } = useContext(UserContext);
   const navigate = useNavigate();
 
   const { config } = data;
@@ -39,12 +39,13 @@ export default function TrendingSideBar() {
   function redirectHashtagPage({ hashtagClicked }) {
     setHashtagName(hashtagClicked);
     navigate(`/hashtag/${hashtagClicked}`);
+    setRefreshKey(!refreshKey)
   }
 
   return (
     <>
       <SideBar>
-        <h1>treding</h1>
+        <h1>trending</h1>
         <div>
           {trendingList.map((hashtag, index) => (
             <Hashtag
