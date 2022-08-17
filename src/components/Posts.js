@@ -2,15 +2,18 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useEffect, useContext, useRef } from "react";
 import ReactTooltip from "react-tooltip";
-import { Link } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
+import { Link, useNavigate } from "react-router-dom";
 
 import UserContext from "../contexts/UserContext";
 import DeletePost from "./DeletePost";
+import { ReactTagify } from "react-tagify";
 
 export default function BuildPosts(props) {
+    const navigate = useNavigate();
     const { post, data, refreshPage, setRefreshPage, setPostData } = props;
-    const { setUserPostName } = useContext(UserContext);
+
+    const { setUserPostName, setHashtagName } = useContext(UserContext);
     const inputRef = useRef(null);
 
     const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
@@ -42,6 +45,7 @@ export default function BuildPosts(props) {
             } 
         };
 
+
         if (!iAmLiked) {
             if (post.usersWhoLiked.length === 2){
                 setUsersWhoLiked(`${post.usersWhoLiked[0].username}, ${post.usersWhoLiked[1].username} curtiram o post`)
@@ -57,9 +61,12 @@ export default function BuildPosts(props) {
     },[]);
 
     function like () {
-        if (likeButton === "heart") {
-            const dislikeAxios = axios.post(`http://localhost:4000/timeline/${post.postId}/dislike`, {userId: data.id});
-                
+      if (likeButton === "heart") {
+        const dislikeAxios = axios.post(
+          `http://localhost:4000/timeline/${post.postId}/dislike`,
+          { userId: data.id }
+        );
+        
             dislikeAxios.then(() => {
                 setLikeButton("heart-outline")
                 setQuantityOfLike(quantityOfLike - 1)
@@ -70,8 +77,11 @@ export default function BuildPosts(props) {
             });
 
         } else {
-            const likeAxios = axios.post(`http://localhost:4000/timeline/${post.postId}/like`, {userId: data.id});
-            
+            const likeAxios = axios.post(
+              `http://localhost:4000/timeline/${post.postId}/like`,
+              { userId: data.id }
+            );
+
             likeAxios.then(() => {
                 setLikeButton("heart")
                 setQuantityOfLike(quantityOfLike + 1)
@@ -141,35 +151,58 @@ function makeEditable () {
   setAllowedEdit(true);
 };
 
+const tagStyle = {
+  color: "#FFFFFF",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
     return (
         <>
           <PostStyle>
               <div className="column1">
                   <div className="profilePicture">
-                      <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()} ><img src={`${post.pictureUrl}`} alt="" /></LinkStyle>
-                  </div>
+                  <LinkStyle
+                    to={`/user/${post.userId}`}
+                    onClick={() => redirectUserPageContext()}
+                  >
+                    <img src={`${post.pictureUrl}`} alt="" />
+                  </LinkStyle>                  
+              </div>
                   <ion-icon name={likeButton} onClick={() => like()} />
                   <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
               </div>
               <div className="column2">
                   <div className="profileName">
-                    <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()}><p>{post.username}</p></LinkStyle>
+                    <LinkStyle
+                      to={`/user/${post.userId}`}
+                      onClick={() => redirectUserPageContext()}
+                    >
+                      <p>{post.username}</p>
+                    </LinkStyle>                  
                   </div>
                   <div className="postMessage">
-                      {allowedEdit? (
-                          <textarea 
-                            type="text"
-                            disabled={disabled}
-                            ref={inputRef}
-                            value={editContent}
-                            onChange={(e) => {setEditContend(e.target.value)}}
-                            placeholder={post.message}
-                            onKeyDown={verifyKey}
-                          />
-                        ) : (
-                          <p >{messagePost}</p>
-                      )}
-                      
+                    <ReactTagify
+                      tagStyle={tagStyle}
+                      tagClicked={(tag) => {
+                        setHashtagName(tag.slice(1));
+                        navigate(`/hashtag/${tag.slice(1)}`);
+                      }}
+                    >
+                    {allowedEdit? (
+                        <textarea 
+                          type="text"
+                          disabled={disabled}
+                          ref={inputRef}
+                          value={editContent}
+                          onChange={(e) => {setEditContend(e.target.value)}}
+                          placeholder={post.message}
+                          onKeyDown={verifyKey}
+                        />
+                      ) : (
+                        <p >{messagePost}</p>
+                    )}
+                    </ReactTagify>
                   </div>
                   <div onClick={() => redirect(post.url)} className="link">
                       <p>{post.urlInfo.title}</p>
@@ -227,13 +260,13 @@ const PostStyle = styled.div`
   }
 
   .column1 > p {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 11px;
     line-height: 13px;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   .profilePicture {
@@ -246,6 +279,7 @@ const PostStyle = styled.div`
   }
 
   .profilePicture img {
+    object-fit: cover;
     width: 50px;
     height: 50px;
     border-radius: 26.5px;
@@ -413,9 +447,9 @@ const PostStyle = styled.div`
       color: #cecece;
     }
   }
-`;
+`
 
 const LinkStyle = styled(Link)`
-    text-decoration: none;
-    color: #FFFFFF;
-`;
+  text-decoration: none;
+  color: #ffffff;
+`

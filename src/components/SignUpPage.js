@@ -100,6 +100,11 @@ const Content = styled.div`
   padding-left: 10%;
 
   background-color: #151515;
+
+  @media (max-width: 580px) {
+    flex-direction: column;
+    padding: 0;
+  }
 `;
 
 const TitleDiv = styled.div`
@@ -124,6 +129,24 @@ const TitleDiv = styled.div`
     font-size: 43px;
     line-height: 64px;
     max-width: 442px;
+  }
+
+  @media (max-width: 580px) {
+    text-align: center;
+    align-items: center;
+
+    h1 {
+      font-size: 76px;
+      line-height: 84px;
+    }
+
+    h2 {
+      font-size: 23px;
+      line-height: 34px;
+      max-width: 260px;
+      margin-top: -10px;
+      margin-bottom: 27px;
+    }
   }
 `;
 
@@ -170,11 +193,29 @@ const SignUpDiv = styled.div`
 
     cursor: pointer;
   }
+
+  @media (max-width: 580px) {
+    width: 100%;
+    padding: 40px 23px 91px 23px;
+    height: 100%;
+
+    font-size: 22px;
+    line-height: 33px;
+
+    input {
+      height: 55px;
+    }
+
+    a {
+      font-size: 17px;
+      line-height: 20px;
+    }
+  }
 `;
 
 const Input = styled.input`
   margin-bottom: 11px;
-  height: 55px;
+  height: 65px;
   width: 100%;
 
   background: ${(props) => (props.background ? "#c2c2c2" : "#ffffff")};

@@ -9,6 +9,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [reloadPage, setReloadPage] = useState(false);
+
 
   const navigate = useNavigate();
   const { setData } = useContext(UserContext);
@@ -24,7 +26,7 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await axios.post("http://localhost:4000/", body);
+      const response = await axios.post("https://projeto17--linkr--backend.herokuapp.com/", body);
 
       registerLogin(response.data, body);
     } catch (err) {
@@ -33,10 +35,8 @@ export default function LoginPage() {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////--- MUDAR O NAVIGATE ABAIXO PARA PAGINA QUE ESTA TRABAHANDO ---///
   function registerLogin(data, body) {
-    setData({ ...data });
+    setData({ ...data, reloadPage, setReloadPage });
     saveLoginInLocalStorage(body);
 
     navigate("/timeline");
@@ -64,7 +64,7 @@ export default function LoginPage() {
     }
   }
 
-  useEffect(() => checkLocalStorageToLogin(), []);
+  useEffect(() => checkLocalStorageToLogin());
 
   return (
     <Content>
@@ -112,6 +112,11 @@ const Content = styled.div`
   padding-left: 10%;
 
   background-color: #151515;
+
+  @media (max-width: 580px) {
+    flex-direction: column;
+    padding: 0;
+  }
 `;
 
 const TitleDiv = styled.div`
@@ -136,6 +141,24 @@ const TitleDiv = styled.div`
     font-size: 43px;
     line-height: 64px;
     max-width: 442px;
+  }
+
+  @media (max-width: 580px) {
+    text-align: center;
+    align-items: center;
+
+    h1 {
+      font-size: 76px;
+      line-height: 84px;
+    }
+
+    h2 {
+      font-size: 23px;
+      line-height: 34px;
+      max-width: 260px;
+      margin-top: -10px;
+      margin-bottom: 27px;
+    }
   }
 `;
 
@@ -181,6 +204,25 @@ const LoginDiv = styled.div`
     line-height: 20px;
 
     cursor: pointer;
+  }
+
+  @media (max-width: 580px) {
+    width: 100%;
+    padding: 40px 23px 91px 23px;
+    height: 100%;
+    justify-content: start;
+
+    font-size: 22px;
+    line-height: 33px;
+
+    input {
+      height: 55px;
+    }
+
+    a {
+      font-size: 17px;
+      line-height: 20px;
+    }
   }
 `;
 
