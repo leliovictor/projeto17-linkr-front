@@ -3,25 +3,25 @@ import axios from "axios";
 import { useState, useEffect, useContext, useRef } from "react";
 import ReactTooltip from "react-tooltip";
 import { Link } from "react-router-dom";
+import { TiPencil } from "react-icons/ti";
 
 import UserContext from "../contexts/UserContext";
 import DeletePost from "./DeletePost";
-import EditPost from "./EditPost";
 
 export default function BuildPosts(props) {
     const { post, data, refreshPage, setRefreshPage, setPostData } = props;
     const { setUserPostName } = useContext(UserContext);
+    const inputRef = useRef(null);
+
+    const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
     const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
     const [likeButton, setLikeButton] = useState("heart-outline");
-    const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
 
-    //////////////////////////
+    const [messagePost, setMessagePost] = useState(post.message);
+    const [allowedEdit, setAllowedEdit] = useState(false);
+    const [editContent, setEditContend] = useState("");
+    const [disabled, setDisabled] = useState(false);
 
-    const [visible, setVisible] = useState(false)
-    const inputRef = useRef(null)
-    const [value, setValue] = useState(inputRef.current)
-
-    //////////////
     let iAmLiked = false;
 
     useEffect(() => {
@@ -88,43 +88,58 @@ export default function BuildPosts(props) {
     };
 
     function redirectUserPageContext () {
-      setUserPostName({userId: post.userId, username: post.username})
+      setUserPostName({userId: post.userId, username: post.username});
     };
     
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-/*
-    function EditPost() {
+  useEffect(() => {
+    if(allowedEdit && inputRef.current) {
+      inputRef.current.focus();
+    };
+  },[allowedEdit]);
 
-      function showInput() {
-        setVisible(true)
-      };
+  function verifyKey (event) {
+    switch (event.keyCode) {
+      case 13:
+        sendEditedContent();
+        event.preventDefault();
+        break;
 
+      case 27:
+        cancelEdit();
+        event.preventDefault();
+        break;
 
-      function acessingElement () {
-        inputRef.current.focus()
-        console.log("acessando testando: ", inputRef.current, "focus: ", inputRef.current.focus())
-
-      }
-
-      function sendChanges(e) {
-        e.preventDefault();
-
-
-
-      }
-
-
-
-      return (
-        <>
-          <ion-icon name="pencil-outline" onClick={() => showInput()}></ion-icon>
-        </>
-      )
+      default:
+        break;
     }
-*/
-    
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  };
+
+  function sendEditedContent () {
+    const { config } = data;
+    setDisabled(true);
+
+    const sendEdit = axios.post(`http://localhost:4000/timeline/${post.postId}/edit`, {message: editContent}, config);
+
+    sendEdit.then(() => {
+      setDisabled(false);
+      setAllowedEdit(false);
+      setMessagePost(editContent);
+    });
+
+    sendEdit.catch(() => {
+      setDisabled(false);
+      alert("Não foi possivel salvar as alterações!");
+    });
+  };
+
+  function cancelEdit () {
+    setAllowedEdit(false);
+    setEditContend("");
+  };
+
+function makeEditable () {
+  setAllowedEdit(true);
+};
 
     return (
         <>
@@ -141,7 +156,19 @@ export default function BuildPosts(props) {
                     <LinkStyle to={`/user/${post.userId}`} onClick={() => redirectUserPageContext()}><p>{post.username}</p></LinkStyle>
                   </div>
                   <div className="postMessage">
-                      <p ref={inputRef}>{post.message}</p>
+                      {allowedEdit? (
+                          <textarea 
+                            type="text"
+                            disabled={disabled}
+                            ref={inputRef}
+                            value={editContent}
+                            onChange={(e) => {setEditContend(e.target.value)}}
+                            placeholder={post.message}
+                            onKeyDown={verifyKey}
+                          />
+                        ) : (
+                          <p >{messagePost}</p>
+                      )}
                       
                   </div>
                   <div onClick={() => redirect(post.url)} className="link">
@@ -157,7 +184,7 @@ export default function BuildPosts(props) {
                 <></>
               )}
             {data.id === post.userId ? (
-              <EditPost inputRef={inputRef} postId={post.postId}/>
+              <TiPencil className="pencil" onClick={() => {allowedEdit? cancelEdit() : makeEditable()}} />
               ) : (
                 <></>
               )}
@@ -244,6 +271,13 @@ const PostStyle = styled.div`
     max-width: 502px;
   }
 
+  .postMessage textarea {
+    width: 503px;
+    height: 44px;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+  }
+
   .link {
     width: 503px;
     height: 155px;
@@ -294,6 +328,15 @@ const PostStyle = styled.div`
     text-overflow: ellipsis;
   }
 
+  .pencil {
+    color: #FFFFFF;
+    font-size: 22px;
+    position: absolute;
+    right: 48px;
+    top: 22px;
+    cursor: pointer;
+  }
+
   @media (max-width: 580px) {
     width: 100%;
     height: 232px;
@@ -331,6 +374,11 @@ const PostStyle = styled.div`
       font-size: 15px;
       line-height: 18px;
       max-width: 288px;
+    }
+
+    .postMessage textarea {
+      width: 278px;
+      height: 33px;
     }
 
     .link {
