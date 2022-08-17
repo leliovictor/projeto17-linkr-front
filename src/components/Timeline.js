@@ -24,7 +24,6 @@ export default function Timeline() {
     receive.then((response) => {
       setLoading(false);
       setPostData(response.data);
-      console.log(response.data[response.data.length -1])
 
       if (response.data.length === 0) {
         console.log("There are no posts yet");
