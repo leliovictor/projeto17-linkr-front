@@ -44,9 +44,9 @@ export default function LineWaitingPosts({posts}){
                 <ThreeDots color="#FFFFFF" height={20} width={50} />
                 :  
                 <> 
-                    <h3>
+                    <h1>
                         {watingPosts.length - posts.length} new posts, load more!
-                    </h3>
+                    </h1>
                     <FaSyncAlt color="#FFFFFF" fontSize="16px"/>
                 </>
                 }
@@ -71,7 +71,7 @@ const WaitingPosts = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    h3 {
+    h1 {
         font-family: 'Lato';
         font-style: normal;
         font-weight: 400;
