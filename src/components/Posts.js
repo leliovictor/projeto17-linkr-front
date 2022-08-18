@@ -155,8 +155,7 @@ const tagStyle = {
   fontWeight: 700,
   cursor: "pointer",
 };
-
-    return (
+return (
         <>
           <PostStyle>
               <div className="column1">
@@ -186,6 +185,7 @@ const tagStyle = {
                       tagClicked={(tag) => {
                         setHashtagName(tag.slice(1));
                         navigate(`/hashtag/${tag.slice(1)}`);
+                        
                       }}
                     >
                     {allowedEdit? (
