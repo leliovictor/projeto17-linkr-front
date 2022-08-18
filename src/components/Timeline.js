@@ -92,6 +92,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
 `;
+
 const LeftContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -99,6 +100,7 @@ const LeftContainer = styled.div`
   width: 100%;
   height: fit-content;
 `;
+
 const RightContainer = styled.div`
   margin-left: 25px;
   width:20%;
@@ -106,6 +108,7 @@ const RightContainer = styled.div`
     display: none;
   }
 `;
+
 const Title = styled.div`
   font-family: "Oswald";
   font-weight: 700;

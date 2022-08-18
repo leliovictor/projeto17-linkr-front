@@ -4,6 +4,7 @@ import { useState, useContext, useEffect } from "react";
 import UserContext from "../contexts/UserContext.js";
 import { useNavigate } from "react-router-dom";
 
+
 export default function TrendingSideBar() {
   const [trendingList, setTrendingList] = useState([]);
   const { data, setHashtagName, refreshKey, setRefreshKey } = useContext(UserContext);
@@ -13,7 +14,6 @@ export default function TrendingSideBar() {
   
   useEffect(() => {
     if (config) {
-
     const promise = axios.get("http://localhost:4000/hashtags", config);
 
     promise
