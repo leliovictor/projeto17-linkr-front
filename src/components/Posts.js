@@ -212,7 +212,7 @@ const tagStyle = {
                   </div>
               </div>
               {data.id === post.userId ? (
-            <DeletePost postId={post.postId} setPostData={setPostData} refreshPage={refreshPage} setRefreshPage={setRefreshPage}/>
+            <DeletePost postId={post.postId} />
               ) : (
                 <></>
               )}
