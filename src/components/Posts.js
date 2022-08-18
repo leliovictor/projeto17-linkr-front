@@ -1,164 +1,230 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import ReactTooltip from "react-tooltip";
+import { TiPencil } from "react-icons/ti";
 import { Link, useNavigate } from "react-router-dom";
+
 import UserContext from "../contexts/UserContext";
 import DeletePost from "./DeletePost";
 import { ReactTagify } from "react-tagify";
 
 export default function BuildPosts(props) {
-  const navigate = useNavigate();
-  const { post, data, refreshPage, setRefreshPage, setPostData } = props;
-  const { setUserPostName, setHashtagName } = useContext(UserContext);
-  const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
-  const [likeButton, setLikeButton] = useState("heart-outline");
-  const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
-  let iAmLiked = false;
+    const navigate = useNavigate();
+    const { post, data, refreshPage, setRefreshPage, setPostData } = props;
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
+    const { setUserPostName, setHashtagName } = useContext(UserContext);
+    const inputRef = useRef(null);
 
-    for (let i = 0; i < post.usersWhoLiked.length; i++) {
-      if (post.usersWhoLiked[i]?.username === data.username) {
-        setLikeButton("heart");
-        if (post.usersWhoLiked.length >= 2) {
-          setUsersWhoLiked(`Você, 
-                    ${
-                      post.usersWhoLiked[i - 1]?.username ||
-                      post.usersWhoLiked[i + 1]?.username
-                    } 
-                    ${
-                      post.usersWhoLiked.length > 3
-                        ? "curtiram a foto"
-                        : ` e outras ${quantityOfLike - 2} pessoas`
-                    }`);
+    const [usersWhoLiked, setUsersWhoLiked] = useState("Ninguem curtiu a foto");
+    const [quantityOfLike, setQuantityOfLike] = useState(post.likes);
+    const [likeButton, setLikeButton] = useState("heart-outline");
+
+    const [messagePost, setMessagePost] = useState(post.message);
+    const [allowedEdit, setAllowedEdit] = useState(false);
+    const [editContent, setEditContend] = useState("");
+    const [disabled, setDisabled] = useState(false);
+
+    let iAmLiked = false;
+
+    useEffect(() => {
+        ReactTooltip.rebuild();
+
+        for(let i = 0; i < post.usersWhoLiked.length; i++) {
+            if (post.usersWhoLiked[i]?.username === data.username) {
+                setLikeButton("heart")
+                if (post.usersWhoLiked.length >= 2) {
+                setUsersWhoLiked(`Você, 
+                    ${post.usersWhoLiked[i - 1]?.username || post.usersWhoLiked[i + 1]?.username} 
+                    ${post.usersWhoLiked.length > 3 ? "curtiram a foto" : ` e outras ${quantityOfLike - 2} pessoas`}`
+                )
+                } else {
+                setUsersWhoLiked(`Você curtiu o post`)
+                }
+                iAmLiked = true
+            } 
+        };
+
+
+        if (!iAmLiked) {
+            if (post.usersWhoLiked.length === 2){
+                setUsersWhoLiked(`${post.usersWhoLiked[0].username}, ${post.usersWhoLiked[1].username} curtiram o post`)
+            }
+            else if (post.usersWhoLiked.length > 2) {
+                setUsersWhoLiked(`${post.usersWhoLiked[0].username}, ${post.usersWhoLiked[1].username} e outras ${quantityOfLike - 2} pessoas`)
+            }
+            else if (post.usersWhoLiked.length === 1) {
+                setUsersWhoLiked(`${post.usersWhoLiked[0].username} curtiu o post`)
+
+            }
+        };
+    },[]);
+
+    function like () {
+      if (likeButton === "heart") {
+        const dislikeAxios = axios.post(
+          `http://localhost:4000/timeline/${post.postId}/dislike`,
+          { userId: data.id }
+        );
+        
+            dislikeAxios.then(() => {
+                setLikeButton("heart-outline")
+                setQuantityOfLike(quantityOfLike - 1)
+            });
+
+            dislikeAxios.catch((err) => {
+                console.log(err)
+            });
+
         } else {
-          setUsersWhoLiked(`Você curtiu o post`);
+            const likeAxios = axios.post(
+              `http://localhost:4000/timeline/${post.postId}/like`,
+              { userId: data.id }
+            );
+
+            likeAxios.then(() => {
+                setLikeButton("heart")
+                setQuantityOfLike(quantityOfLike + 1)
+            });
+
+            likeAxios.catch((err) => {
+                console.log(err)
+            });  
         }
-        iAmLiked = true;
-      }
+    };
+
+    function redirect(url) {
+        window.open(url, "_blank");
+    };
+
+    function redirectUserPageContext () {
+      setUserPostName({userId: post.userId, username: post.username});
+    };
+    
+  useEffect(() => {
+    if(allowedEdit && inputRef.current) {
+      inputRef.current.focus();
+    };
+  },[allowedEdit]);
+
+  function verifyKey (event) {
+    switch (event.keyCode) {
+      case 13:
+        sendEditedContent();
+        event.preventDefault();
+        break;
+
+      case 27:
+        cancelEdit();
+        event.preventDefault();
+        break;
+
+      default:
+        break;
     }
-
-    if (!iAmLiked) {
-      if (post.usersWhoLiked.length === 2) {
-        setUsersWhoLiked(
-          `${post.usersWhoLiked[0].username}, ${post.usersWhoLiked[1].username} curtiram o post`
-        );
-      } else if (post.usersWhoLiked.length > 2) {
-        setUsersWhoLiked(
-          `${post.usersWhoLiked[0].username}, ${
-            post.usersWhoLiked[1].username
-          } e outras ${quantityOfLike - 2} pessoas`
-        );
-      } else if (post.usersWhoLiked.length === 1) {
-        setUsersWhoLiked(`${post.usersWhoLiked[0].username} curtiu o post`);
-      }
-    }
-  }, []);
-
-  function like() {
-    if (likeButton === "heart") {
-      const dislikeAxios = axios.post(
-        `http://localhost:4000/timeline/${post.postId}/dislike`,
-        { userId: data.id }
-      );
-
-      dislikeAxios.then(() => {
-        setLikeButton("heart-outline");
-        setQuantityOfLike(quantityOfLike - 1);
-      });
-
-      dislikeAxios.catch((err) => {
-        console.log(err);
-      });
-    } else {
-      const likeAxios = axios.post(
-        `http://localhost:4000/timeline/${post.postId}/like`,
-        { userId: data.id }
-      );
-
-      likeAxios.then(() => {
-        setLikeButton("heart");
-        setQuantityOfLike(quantityOfLike + 1);
-      });
-
-      likeAxios.catch((err) => {
-        console.log(err);
-      });
-    }
-  }
-
-  function redirect(url) {
-    window.open(url, "_blank");
-  }
-
-  function redirectUserPageContext() {
-    setUserPostName({ userId: post.userId, username: post.username });
-  }
-
-  const tagStyle = {
-    color: "#FFFFFF",
-    fontWeight: 700,
-    cursor: "pointer",
   };
 
-  return (
-    <>
-      <PostStyle>
-        <div className="column1">
-          <div className="profilePicture">
-            <LinkStyle
-              to={`/user/${post.userId}`}
-              onClick={() => redirectUserPageContext()}
-            >
-              <img src={`${post.pictureUrl}`} alt="" />
-            </LinkStyle>
-          </div>
-          <ion-icon name={likeButton} onClick={() => like()} />
-          <p data-tip={usersWhoLiked}>{quantityOfLike} likes</p>
-        </div>
-        <div className="column2">
-          <div className="profileName">
-            <LinkStyle
-              to={`/user/${post.userId}`}
-              onClick={() => redirectUserPageContext()}
-            >
-              <p>{post.username}</p>
-            </LinkStyle>
-          </div>
-          <div className="postMessage">
-            <ReactTagify
-              tagStyle={tagStyle}
-              tagClicked={(tag) => {
-                setHashtagName(tag.slice(1));
-                navigate(`/hashtag/${tag.slice(1)}`);
-              }}
-            >
-              <p>{post.message ? post.message : ""}</p>
-            </ReactTagify>
-          </div>
-          <div onClick={() => redirect(post.url)} className="link">
-            <p>{post.urlInfo.title}</p>
-            <p>{post.urlInfo.description}</p>
-            <p>{post.url}</p>
-            <img src={post.urlInfo.image} alt="" />
-          </div>
-        </div>
-        {data.id === post.userId ? (
-          <DeletePost
-            postId={post.postId}
-            setPostData={setPostData}
-            refreshPage={refreshPage}
-            setRefreshPage={setRefreshPage}
-          />
-        ) : (
-          <></>
-        )}
-      </PostStyle>
-    </>
-  );
-}
+  function sendEditedContent () {
+    const { config } = data;
+    setDisabled(true);
+
+    const sendEdit = axios.post(`http://localhost:4000/timeline/${post.postId}/edit`, {message: editContent}, config);
+
+    sendEdit.then(() => {
+      setDisabled(false);
+      setAllowedEdit(false);
+      setMessagePost(editContent);
+    });
+
+    sendEdit.catch(() => {
+      setDisabled(false);
+      alert("Não foi possivel salvar as alterações!");
+    });
+  };
+
+  function cancelEdit () {
+    setAllowedEdit(false);
+    setEditContend("");
+  };
+
+function makeEditable () {
+  setAllowedEdit(true);
+};
+
+const tagStyle = {
+  color: "#FFFFFF",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+    return (
+        <>
+          <PostStyle>
+              <div className="column1">
+                  <div className="profilePicture">
+                  <LinkStyle
+                    to={`/user/${post.userId}`}
+                    onClick={() => redirectUserPageContext()}
+                  >
+                    <img src={`${post.pictureUrl}`} alt="" />
+                  </LinkStyle>                  
+              </div>
+                  <ion-icon name={likeButton} onClick={() => like()} />
+                  <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
+              </div>
+              <div className="column2">
+                  <div className="profileName">
+                    <LinkStyle
+                      to={`/user/${post.userId}`}
+                      onClick={() => redirectUserPageContext()}
+                    >
+                      <p>{post.username}</p>
+                    </LinkStyle>                  
+                  </div>
+                  <div className="postMessage">
+                    <ReactTagify
+                      tagStyle={tagStyle}
+                      tagClicked={(tag) => {
+                        setHashtagName(tag.slice(1));
+                        navigate(`/hashtag/${tag.slice(1)}`);
+                      }}
+                    >
+                    {allowedEdit? (
+                        <textarea 
+                          type="text"
+                          disabled={disabled}
+                          ref={inputRef}
+                          value={editContent}
+                          onChange={(e) => {setEditContend(e.target.value)}}
+                          placeholder={post.message}
+                          onKeyDown={verifyKey}
+                        />
+                      ) : (
+                        <p >{messagePost}</p>
+                    )}
+                    </ReactTagify>
+                  </div>
+                  <div onClick={() => redirect(post.url)} className="link">
+                      <p>{post.urlInfo.title}</p>
+                      <p>{post.urlInfo.description}</p>
+                      <p>{post.url}</p>
+                      <img src={post.urlInfo.image} alt="" />
+                  </div>
+              </div>
+              {data.id === post.userId ? (
+            <DeletePost postId={post.postId} setPostData={setPostData} refreshPage={refreshPage} setRefreshPage={setRefreshPage}/>
+              ) : (
+                <></>
+              )}
+            {data.id === post.userId ? (
+              <TiPencil className="pencil" onClick={() => {allowedEdit? cancelEdit() : makeEditable()}} />
+              ) : (
+                <></>
+              )}
+          </PostStyle>
+        </>
+    );
+};
 
 const PostStyle = styled.div`
   width: 611px;
@@ -239,6 +305,13 @@ const PostStyle = styled.div`
     max-width: 502px;
   }
 
+  .postMessage textarea {
+    width: 503px;
+    height: 44px;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+  }
+
   .link {
     width: 503px;
     height: 155px;
@@ -289,6 +362,15 @@ const PostStyle = styled.div`
     text-overflow: ellipsis;
   }
 
+  .pencil {
+    color: #FFFFFF;
+    font-size: 22px;
+    position: absolute;
+    right: 48px;
+    top: 22px;
+    cursor: pointer;
+  }
+
   @media (max-width: 580px) {
     width: 100%;
     height: 232px;
@@ -328,6 +410,11 @@ const PostStyle = styled.div`
       max-width: 288px;
     }
 
+    .postMessage textarea {
+      width: 278px;
+      height: 33px;
+    }
+
     .link {
       width: 278px;
       height: 115px;
@@ -360,9 +447,9 @@ const PostStyle = styled.div`
       color: #cecece;
     }
   }
-`;
+`
 
 const LinkStyle = styled(Link)`
   text-decoration: none;
   color: #ffffff;
-`;
+`
