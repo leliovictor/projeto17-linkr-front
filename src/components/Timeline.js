@@ -3,21 +3,26 @@ import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
-
 import UserContext from "../contexts/UserContext";
 import Header from "./Header";
 import NewPost from "./NewPost";
 import TrendingSideBar from "./TrendingSideBar";
-import BuildPosts from "./Posts"
+import BuildPosts from "./Posts";
+import LineWaitingPosts from "./LineWaitPosts";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
-  const { data } = useContext(UserContext);
-  const [refreshPage, setRefreshPage] = useState(false);
+  const { data, refreshKey } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const receive = axios.get("http://localhost:4000/timeline");
+    setLoading(true);
+
+    const receive = axios.get(
+      "http://localhost:4000/timeline"
+    );
     receive.then((response) => {
+      setLoading(false);
       setPostData(response.data);
 
       if (response.data.length === 0) {
@@ -29,20 +34,26 @@ export default function Timeline() {
       alert(
         "An error occured while trying to fetch the posts, please refresh the page"
       );
-      console.log(err);
+      setLoading(false);
     });
-  }, [refreshPage]);
+  }, [refreshKey]);
+
+
 
   function RenderPosts() {
     return (
       <>
         {postData.map((post, index) => (
-          <BuildPosts key={index} post={post} data={data} refreshPage={refreshPage} setRefreshPage={setRefreshPage} setPostData={setPostData}/>
+          <BuildPosts
+            key={index}
+            post={post}
+            data={data}
+          />
         ))}
-        <ReactTooltip type="light" place="bottom" effect="solid"/>
+        <ReactTooltip type="light" place="bottom" effect="solid" />
       </>
     );
-  };
+  }
 
   return (
     <>
@@ -52,25 +63,26 @@ export default function Timeline() {
       </Title>
       <Container>
         <LeftContainer>
-            <NewPost refreshPage={refreshPage} setRefreshPage={setRefreshPage} setPostData={setPostData} />
-            <TimelineStyle>
-              <div className="timeline">
-                {postData.length !== 0 ? (
-                  <RenderPosts />
-                ) : (
-                  <RotatingLines
-                    strokeColor="grey"
-                    strokeWidth="5"
-                    animationDuration="0.75"
-                    width="96"
-                    visible={true}
-                  />
-                )}
-              </div>
-            </TimelineStyle>
+          <NewPost />
+          {postData.length > 0 ? <LineWaitingPosts posts={postData} setPosts={setPostData} /> : null} 
+          <TimelineStyle>
+            <div className="timeline">
+              {loading ? (
+                <RotatingLines
+                  strokeColor="grey"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  width="96"
+                  visible={true}
+                />
+              ) : (
+                <RenderPosts />
+              )}
+            </div>
+          </TimelineStyle>
         </LeftContainer>
         <RightContainer>
-          <TrendingSideBar refreshPage={refreshPage} />
+          <TrendingSideBar />
         </RightContainer>
       </Container>
     </>
@@ -82,14 +94,16 @@ const Container = styled.div`
 `;
 
 const LeftContainer = styled.div`
-
   display: flex;
   flex-direction: column;
+  max-width: 611px;
+  width: 100%;
   height: fit-content;
 `;
 
 const RightContainer = styled.div`
   margin-left: 25px;
+  width:20%;
   @media (max-width: 560px) {
     display: none;
   }
@@ -106,11 +120,12 @@ const Title = styled.div`
   justify-content: space-around;
   color: #ffffff;
   h1 {
-    width: 611px;
+    width: 100%;
+    max-width: 611px;
   }
 
-  @media (max-width: 580px) {
-    margin-left: 18px;
+  @media (max-width: 560px) {
+    padding-left: 18px;
   }
 `;
 

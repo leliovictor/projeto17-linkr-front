@@ -15,9 +15,10 @@ export default function App() {
   const [data, setData] = useState({});
   const [hashtagName, setHashtagName] = useState();
   const [userPostName, setUserPostName] = useState();
+  const [refreshKey, setRefreshKey] = useState(false);
 
   return (
-    <UserContext.Provider value={{ data, setData, userPostName, setUserPostName, hashtagName, setHashtagName }}>
+    <UserContext.Provider value={{ data, setData, userPostName, setUserPostName, hashtagName, setHashtagName, refreshKey, setRefreshKey }}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LoginPage />} />

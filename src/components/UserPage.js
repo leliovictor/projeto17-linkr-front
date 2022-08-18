@@ -11,14 +11,18 @@ import UserContext from "../contexts/UserContext";
 export default function UserPage() {
     const [userPostData, setUserPostData] = useState([]);
     const { data, userPostName } = useContext(UserContext);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const receive = axios.get(`http://localhost:4000/user/${userPostName.userId}`);
+      setLoading(true);
+        const receive = axios.get(`http://localhost:4000/user/${userPostName?.userId}`);
         receive.then((response) => {
             setUserPostData(response.data);
+            setLoading(false);
     
             if (response.data.length === 0) {
                 console.log("There are no posts yet");
+                setLoading(false);
             }
         });
     
@@ -45,11 +49,11 @@ export default function UserPage() {
         <>
             <Header />
             <Title>
-                <h1>{userPostName.username}'s posts</h1>
+                <h1>{userPostName?.username}'s posts</h1>
             </Title>
             <UserPageStyle>
                 <div className="userPosts">
-                {userPostData.length !== 0 ? (
+                {!loading ? (
                     <RenderPosts />
                 ) : (
                     <RotatingLines

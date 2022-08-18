@@ -56,6 +56,13 @@ const Position = styled.div`
   width: 100%;
   max-width: 560px;
   height: 45px;
+  @media (max-width: 560px) {
+    position: absolute;
+    top: 82px;
+    width: 93%;
+    margin-left: 17px;
+
+  }
 `;
 
 const Content = styled.div`
