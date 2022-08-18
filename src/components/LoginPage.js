@@ -58,6 +58,7 @@ export default function LoginPage() {
         const response = await axios.post("http://localhost:4000/", body);
         registerLogin(response.data, body);
       } catch (err) {
+        
         setLoading(false);
         localStorage.removeItem("autoLogin");
       }
