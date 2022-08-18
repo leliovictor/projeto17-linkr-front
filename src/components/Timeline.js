@@ -3,12 +3,12 @@ import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
-
 import UserContext from "../contexts/UserContext";
 import Header from "./Header";
 import NewPost from "./NewPost";
 import TrendingSideBar from "./TrendingSideBar";
 import BuildPosts from "./Posts";
+import LineWaitingPosts from "./LineWaitPosts";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
@@ -33,6 +33,8 @@ export default function Timeline() {
       setLoading(false);
     });
   }, [refreshKey]);
+
+
 
   function RenderPosts() {
     return (
@@ -65,6 +67,7 @@ export default function Timeline() {
       <Container>
         <LeftContainer>
           <NewPost />
+          {postData.length > 0 ? <LineWaitingPosts posts={postData} setPosts={setPostData} /> : null} 
           <TimelineStyle>
             <div className="timeline">
               {loading ? (
@@ -92,6 +95,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
 `;
+
 const LeftContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -99,12 +103,15 @@ const LeftContainer = styled.div`
   width: 100%;
   height: fit-content;
 `;
+
 const RightContainer = styled.div`
   margin-left: 25px;
+  width:20%;
   @media (max-width: 560px) {
     display: none;
   }
 `;
+
 const Title = styled.div`
   font-family: "Oswald";
   font-weight: 700;

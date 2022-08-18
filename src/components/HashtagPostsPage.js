@@ -10,7 +10,7 @@ import TrendingSideBar from "./TrendingSideBar";
 
 export default function HashtagPostsPage() {
     const [hashtagPostData, setHashtagPostData] = useState([]);
-    const { data, hashtagName } = useContext(UserContext);
+    const { data, hashtagName, refreshKey } = useContext(UserContext);
     const { config } = data
 
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function HashtagPostsPage() {
             );
             console.log(err);
         });
-    }, []);
+    }, [refreshKey]);
 
     function RenderPosts() {
         return (
