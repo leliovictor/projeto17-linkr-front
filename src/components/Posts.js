@@ -11,7 +11,7 @@ import { ReactTagify } from "react-tagify";
 
 export default function BuildPosts(props) {
     const navigate = useNavigate();
-    const { post, data, refreshPage, setRefreshPage, setPostData } = props;
+    const { post, data } = props;
 
     const { setUserPostName, setHashtagName } = useContext(UserContext);
     const inputRef = useRef(null);
@@ -212,7 +212,7 @@ const tagStyle = {
                   </div>
               </div>
               {data.id === post.userId ? (
-            <DeletePost postId={post.postId} setPostData={setPostData} refreshPage={refreshPage} setRefreshPage={setRefreshPage}/>
+            <DeletePost postId={post.postId} />
               ) : (
                 <></>
               )}
