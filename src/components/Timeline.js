@@ -22,8 +22,8 @@ export default function Timeline() {
 
   useEffect(() => {
     setLoading(true);
-
     const receive = axios.get("http://localhost:4000/timeline?page=1", data.config);
+    
     receive.then((response) => {
       setLoading(false);
       setPostData(response.data.posts);
@@ -58,7 +58,7 @@ export default function Timeline() {
         <ReactTooltip type="light" place="bottom" effect="solid" />
       </>
     );
-  }
+  };
 
   function loadPostsToScroll() {
     const promise = axios.get(
@@ -113,7 +113,6 @@ export default function Timeline() {
                   >                  
                   <RenderPosts />
                 </InfiniteScroll>
-              
               )}
             </div>
           </TimelineStyle>
@@ -187,6 +186,16 @@ const TimelineStyle = styled.div`
     line-height: 64px;
     color: #ffffff;
     margin-bottom: 43px;
+  }
+
+  :last-child {
+    margin-bottom: 16px;
+  }
+
+  .backgroundPosts {
+    background-color: #1E1E1E;
+    border-radius: 16px;
+    margin-bottom: 24px;
   }
 
   @media (max-width: 560px) {
