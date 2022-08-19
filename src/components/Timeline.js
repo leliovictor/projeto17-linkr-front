@@ -10,7 +10,7 @@ import TrendingSideBar from "./TrendingSideBar";
 import BuildPosts from "./Posts";
 import LineWaitingPosts from "./LineWaitPosts";
 import InfiniteScroll from "react-infinite-scroller";
-import { AiOutlineLoading3Quarters } from "react-icons/fa";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
@@ -63,13 +63,14 @@ export default function Timeline() {
 
     promise
       .then((response) => {
-
+        console.log(response.data.length)
         if (response.data.length === 0 || response.data.length < 10){
           setNoMore(false)
         }
-        setPostData([...response.data]);
+        setPostData([...postData,...response.data]);
 
         setPage(page+1);
+
       })
       .catch((error) => {
         alert(error);
@@ -100,9 +101,11 @@ export default function Timeline() {
                 <InfiniteScroll pageStart={page}
                   loadMore={loadPostsToScroll}
                   hasMore={noMore}
-                  loader={
-                  <p style={{textAlign: 'center', color:'#6D6D6D','font-family':'Lato', 'font-size':'22px'}}>Loading...</p>}
-                  endMessage={<p>There is no more posts!</p>}
+                  loader={<Infinite>
+                    <AiOutlineLoading3Quarters color="#6D6D6D" fontSize="32px"></AiOutlineLoading3Quarters>
+                    <span >Loading...</span>
+                    </Infinite>}
+                 
                   >                  
                   <RenderPosts />
                 </InfiniteScroll>
@@ -184,3 +187,20 @@ const TimelineStyle = styled.div`
     }
   }
 `;
+const Infinite = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-top:40px;
+  span{
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+    margin-top:15px;
+    margin-bottom:5px;
+    color: #6D6D6D;
+  }
+`

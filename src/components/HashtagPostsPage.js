@@ -8,6 +8,8 @@ import BuildPosts from "./Posts"
 import UserContext from "../contexts/UserContext";
 import TrendingSideBar from "./TrendingSideBar";
 import InfiniteScroll from "react-infinite-scroller";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 
 export default function HashtagPostsPage() {
     const [hashtagPostData, setHashtagPostData] = useState([]);
@@ -49,11 +51,11 @@ export default function HashtagPostsPage() {
     
         promise
           .then((response) => {
-    
+            
             if (response.data.length === 0 || response.data.length < 10){
               setNoMore(false)
             }
-            setHashtagPostData([...response.data]);
+            setHashtagPostData([...hashtagPostData,...response.data]);
     
             setPage(page+1);
           })
@@ -76,9 +78,11 @@ export default function HashtagPostsPage() {
                         <InfiniteScroll pageStart={page}
                           loadMore={loadPostsToScroll}
                           hasMore={noMore}
-                          loader={
-                          <p style={{textAlign: 'center', color:'#6D6D6D','font-family':'Lato', 'font-size':'22px'}}>Loading...</p>}
-                          endMessage={<p>There is no more posts!</p>}
+                          loader={<Infinite>
+                          <AiOutlineLoading3Quarters color="#6D6D6D" fontSize="32px"></AiOutlineLoading3Quarters>
+                          <span >Loading...</span>
+                          </Infinite>}
+                          
                           >                  
                           <RenderPosts />
                       </InfiniteScroll>
@@ -162,3 +166,21 @@ const HashtagPageStyle = styled.div`
     }
   }
 `;
+
+const Infinite = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-top:40px;
+  span{
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+    margin-top:15px;
+    margin-bottom:5px;
+    color: #6D6D6D;
+  }
+`
