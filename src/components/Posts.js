@@ -334,7 +334,7 @@ const PostStyle = styled.div`
   height: 276px;
   background-color: #171717;
   border-radius: 16px;
-  margin-top: 16px;
+  //margin-top: 16px;
   display: flex;
   position: relative;
 
