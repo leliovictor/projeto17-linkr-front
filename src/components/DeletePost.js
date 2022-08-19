@@ -16,7 +16,7 @@ export default function DeletePost({ postId }) {
 
     try {
       await axios.delete(
-        `http://localhost:4000/posts/${postId}`, data.config
+        `http://localhost:4000/post/${postId}/delete`, data.config
       );
 
       setRefreshKey(!refreshKey);

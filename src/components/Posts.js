@@ -65,7 +65,7 @@ export default function BuildPosts(props) {
     function like () {
       if (likeButton === "heart") {
         const dislikeAxios = axios.post(
-          `http://localhost:4000/timeline/${post.postId}/dislike`,
+          `http://localhost:4000/post/${post.postId}/dislike`,
           { userId: data.id }
         );
         
@@ -80,7 +80,7 @@ export default function BuildPosts(props) {
 
         } else {
             const likeAxios = axios.post(
-              `http://localhost:4000/timeline/${post.postId}/like`,
+              `http://localhost:4000/post/${post.postId}/like`,
               { userId: data.id }
             );
 
@@ -103,129 +103,153 @@ export default function BuildPosts(props) {
       setUserPostName({userId: post.userId, username: post.username});
     };
     
-  useEffect(() => {
-    if(allowedEdit && inputRef.current) {
-      inputRef.current.focus();
+    useEffect(() => {
+      if(allowedEdit && inputRef.current) {
+        inputRef.current.focus();
+      };
+    },[allowedEdit]);
+
+    function verifyKey (event) {
+      switch (event.keyCode) {
+        case 13:
+          sendEditedContent();
+          event.preventDefault();
+          break;
+
+        case 27:
+          cancelEdit();
+          event.preventDefault();
+          break;
+
+        default:
+          break;
+      };
     };
-  },[allowedEdit]);
 
-  function verifyKey (event) {
-    switch (event.keyCode) {
-      case 13:
-        sendEditedContent();
-        event.preventDefault();
-        break;
+    function sendEditedContent () {
+      const { config } = data;
+      setDisabled(true);
 
-      case 27:
-        cancelEdit();
-        event.preventDefault();
-        break;
+      const sendEdit = axios.post(`http://localhost:4000/post/${post.postId}/edit`, {message: editContent}, config);
 
-      default:
-        break;
-    }
-  };
+      sendEdit.then(() => {
+        setDisabled(false);
+        setAllowedEdit(false);
+        setMessagePost(editContent);
+      });
 
-  function sendEditedContent () {
-    const { config } = data;
-    setDisabled(true);
+      sendEdit.catch(() => {
+        setDisabled(false);
+        alert("Não foi possivel salvar as alterações!");
+      });
+    };
 
-    const sendEdit = axios.post(`http://localhost:4000/timeline/${post.postId}/edit`, {message: editContent}, config);
-
-    sendEdit.then(() => {
-      setDisabled(false);
+    function cancelEdit () {
       setAllowedEdit(false);
-      setMessagePost(editContent);
-    });
+      setEditContend("");
+    };
 
-    sendEdit.catch(() => {
-      setDisabled(false);
-      alert("Não foi possivel salvar as alterações!");
-    });
-  };
+    function makeEditable () {
+      setAllowedEdit(true);
+    };
 
-  function cancelEdit () {
-    setAllowedEdit(false);
-    setEditContend("");
-  };
+    const tagStyle = {
+      color: "#FFFFFF",
+      fontWeight: 700,
+      cursor: "pointer",
+    };
 
-  function makeEditable () {
-    setAllowedEdit(true);
-  };
+    function BuildCommentBox () {
+      const { config } = data;
+      const [comment, setComment] = useState();
 
-  const tagStyle = {
-    color: "#FFFFFF",
-    fontWeight: 700,
-    cursor: "pointer",
-  };
+      function sendComments () {
+        const commentData = {
+          comment: comment,
+          ownerOfThePost: data.id
+        };
 
-  function BuildCommentBox () {
-    const { config } = data;
-    const [comment, setComment] = useState()
+        const sendComment = axios.post(`http://localhost:4000/post/${post.postId}/comment`, commentData, config);
 
-    function sendComments () {
-      const commentData = {
-        comment: comment,
-        ownerOfThePost: post.userId
+        sendComment.then(() => {
+            setComment("");
+        });
+
+        sendComment.catch((error) => {
+          console.log("erro ao enviar comentario", error);
+        });
       };
 
-      const sendComment = axios.post(`http://localhost:4000/timeline/${post.postId}/comment`, commentData, config);
+      function cancelComment () {
+        setComment("");
+      };
 
-      sendComment.then(() => {
-          console.log("enviou o commentario")
-      });
+      function verifyKeyComment (event) {
+        switch (event.keyCode) {
+          case 13:
+            sendComments();
+            event.preventDefault();
+            break;
+    
+          case 27:
+            cancelComment();
+            event.preventDefault();
+            break;
+    
+          default:
+            break;
+        };
+      };
 
-      sendComment.catch((error) => {
-        console.log("deu erro ao enviar comentario", error)
-      });
-    }
+      function TemplateComment (props) {
+        const { userId, username, pictureUrl, text } = props
+        return (
+          <>
+            <div className="comment">
+              <img src={pictureUrl} alt="" />
+              <div className="collum">
+                <div className="nameAndInfo">
+                  <p>{username}</p>
+                  <p>{userId === post.userId? "• post's author" : ""}</p>
+                </div>
+                <p>{text}</p>
+              </div>
+            </div>
+            <div className="fatherOdTheSeparatoryLine">
+              <div className="separatoryLine" />
+            </div>
+          </>
+        );
+      };
 
-    function TemplateComment (props) {
-      const { pictureUrl, username, text } = props
+
       return (
         <>
-          <div className="comment">
-            <img src={pictureUrl} alt="" />
-            <div className="collum">
-              <div className="nameAndInfo">
-                <p>{username}</p>
-                <p>• informaçoes adicionais</p>
-              </div>
-              <p>{text}</p>
+          <CommentBoxStyle>
+            {post.usersWhoCommented.map((commented, index) => (
+              <TemplateComment 
+                key={index}
+                userId={commented.userId}
+                username={commented.username} 
+                pictureUrl={commented.pictureUrl}
+                text={commented.text}
+              />
+            ))}
+            <div className="boxWriteComment">
+              <img src={`${data.pictureUrl}`} alt="" />
+              <input
+                type="text" 
+                placeholder="write a comment..."
+                value={comment}
+                onChange={(e) => {setComment(e.target.value)}}
+                onKeyDown={verifyKeyComment}
+              />
+              <IoPaperPlaneOutline className="ioPaperPlaneOutline" onClick={() => sendComments()} />
             </div>
-          </div>
-          <div className="fatherOdTheSeparatoryLine">
-            <div className="separatoryLine" />
-          </div>
+          </CommentBoxStyle>
         </>
-      )
+      );
     };
-
-
-    return (
-      <>
-        <CommentBoxStyle>
-          {post.usersWhoCommented.map((commented, index) => (
-            <TemplateComment 
-              pictureUrl={commented.pictureUrl} 
-              username={commented.username} 
-              text={commented.text} 
-            />
-          ))}
-          <div className="boxWriteComment">
-            <img src={`${post.pictureUrl}`} alt="" />
-            <input
-              type="text" 
-              placeholder="write a comment..."
-              value={comment}
-              onChange={(e) => {setComment(e.target.value)}}
-            />
-            <IoPaperPlaneOutline className="ioPaperPlaneOutline" onClick={() => sendComments()} />
-          </div>
-        </CommentBoxStyle>
-      </>
-    )
-  };
 
     return (
         <>
@@ -242,6 +266,7 @@ export default function BuildPosts(props) {
                   <ion-icon name={likeButton} onClick={() => like()} />
                   <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
                   <AiOutlineComment className="aiOutlineComment" onClick={() => setShowCommentBox(!showCommentBox)}/>
+                  <p>{post.usersWhoCommented.length} comments</p>
               </div>
               <div className="column2">
                   <div className="profileName">
@@ -253,27 +278,27 @@ export default function BuildPosts(props) {
                     </LinkStyle>                  
                   </div>
                   <div className="postMessage">
-                    <ReactTagify
-                      tagStyle={tagStyle}
-                      tagClicked={(tag) => {
-                        setHashtagName(tag.slice(1));
-                        navigate(`/hashtag/${tag.slice(1)}`);
-                      }}
-                    >
                     {allowedEdit? (
-                        <textarea 
-                          type="text"
-                          disabled={disabled}
-                          ref={inputRef}
-                          value={editContent}
-                          onChange={(e) => {setEditContend(e.target.value)}}
-                          placeholder={post.message}
-                          onKeyDown={verifyKey}
-                        />
-                      ) : (
-                        <p>{messagePost}</p>
-                    )}
-                    </ReactTagify>
+                          <textarea 
+                            type="text"
+                            disabled={disabled}
+                            ref={inputRef}
+                            value={editContent}
+                            onChange={(e) => {setEditContend(e.target.value)}}
+                            placeholder={post.message}
+                            onKeyDown={verifyKey}
+                          />
+                        ) : (
+                          <ReactTagify
+                            tagStyle={tagStyle}
+                            tagClicked={(tag) => {
+                              setHashtagName(tag.slice(1));
+                              navigate(`/hashtag/${tag.slice(1)}`);
+                            }}
+                          >
+                            <p>{messagePost}</p>
+                          </ReactTagify>
+                      )}
                   </div>
                   <div onClick={() => redirect(post.url)} className="link">
                       <p>{post.urlInfo.title}</p>
@@ -313,12 +338,11 @@ const PostStyle = styled.div`
   display: flex;
   position: relative;
 
-
   .column1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 50px;
+    width: 55px;
     margin-left: 16px;
     margin-top: 18px;
   }
@@ -342,7 +366,7 @@ const PostStyle = styled.div`
     font-family: "Lato";
     font-style: normal;
     font-weight: 400;
-    font-size: 11px;
+    font-size: 10px;
     line-height: 13px;
     text-align: center;
     color: #ffffff;
@@ -361,6 +385,7 @@ const PostStyle = styled.div`
     color: #FFFFFF;
     font-size: 22px;
     margin-top: 15px;
+    cursor: pointer;
   }
 
   .profilePicture img {
@@ -493,6 +518,7 @@ const PostStyle = styled.div`
       font-size: 15px;
       line-height: 18px;
       max-width: 288px;
+      position: relative;
     }
 
     .postMessage textarea {
@@ -549,7 +575,7 @@ const CommentBoxStyle = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
     margin-top: 14px;
     margin-bottom: 20px;
   }
@@ -613,7 +639,7 @@ const CommentBoxStyle = styled.div`
   .boxWriteComment {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     margin-bottom: 25px;
     margin-top: 19px;
@@ -635,6 +661,7 @@ const CommentBoxStyle = styled.div`
     border-radius: 8px;
     padding-left: 10px;
     padding-right: 40px;
+    color: #FFFFFF;
   }
 
   input ::placeholder {
