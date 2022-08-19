@@ -21,20 +21,22 @@ export default function Timeline() {
   const [following, setFollowing] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
-    const receive = axios.get("http://localhost:4000/timeline?page=1", data.config);
-    receive.then((response) => {
-      setLoading(false);
-      setPostData(response.data.posts);
-      setFollowing(response.data.followCount);
-    });
-
-    receive.catch((err) => {
-      alert(
-        "An error occured while trying to fetch the posts, please refresh the page"
-      );
-      setLoading(false);
-    });
+    if (data.config) {
+      setLoading(true);
+      const receive = axios.get("http://localhost:4000/timeline?page=1", data.config);
+      receive.then((response) => {
+        setLoading(false);
+        setPostData(response.data.posts);
+        setFollowing(response.data.followCount);
+      });
+  
+      receive.catch((err) => {
+        alert(
+          "An error occured while trying to fetch the posts, please refresh the page"
+        );
+        setLoading(false);
+      });
+    };
   }, [refreshKey]);
 
   function RenderPosts() {
@@ -68,11 +70,10 @@ export default function Timeline() {
 
     promise
       .then((response) => {
-        console.log(response.data.length)
-        if (response.data.length === 0 || response.data.length < 10){
+        if (response.data.posts.length === 0 || response.data.posts.length < 10){
           setNoMore(false)
         }
-        setPostData([...postData,...response.data]);
+        setPostData([...postData,...response.data.posts]);
 
         setPage(page+1);
 

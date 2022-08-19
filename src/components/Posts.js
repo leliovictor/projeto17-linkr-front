@@ -316,7 +316,7 @@ export default function BuildPosts(props) {
                 <></>
               )}
           </PostStyle>
-          {showCommentBox ?
+            {showCommentBox ?
             (
               <BuildCommentBox />
             ) : (

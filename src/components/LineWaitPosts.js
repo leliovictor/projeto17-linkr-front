@@ -19,7 +19,7 @@ export default function LineWaitingPosts({posts}){
 
     useInterval(()=> {
 
-        const promise = axios.get("http://localhost:4000/timeline", data.config);
+        const promise = axios.get("http://localhost:4000/timeline?page=1", data.config);
         promise
             .then((res) => {
                 setWatingPosts(res.data);
