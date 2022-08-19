@@ -9,17 +9,20 @@ import NewPost from "./NewPost";
 import TrendingSideBar from "./TrendingSideBar";
 import BuildPosts from "./Posts";
 import LineWaitingPosts from "./LineWaitPosts";
+import InfiniteScroll from "react-infinite-scroller";
+import { AiOutlineLoading3Quarters } from "react-icons/fa";
 
 export default function Timeline() {
   const [postData, setPostData] = useState([]);
   const { data, refreshKey } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
-
+  const [page, setPage] = useState(1)
+  const [noMore, setNoMore] = useState(true)
+  
   useEffect(() => {
     setLoading(true);
-
     const receive = axios.get(
-      "http://localhost:4000/timeline"
+      `http://localhost:4000/timeline?page=1`
     );
     receive.then((response) => {
       setLoading(false);
@@ -38,8 +41,6 @@ export default function Timeline() {
     });
   }, [refreshKey]);
 
-
-
   function RenderPosts() {
     return (
       <>
@@ -55,6 +56,26 @@ export default function Timeline() {
     );
   }
 
+  function loadPostsToScroll() {
+    const promise = axios.get(
+      `http://localhost:4000/timeline?page=${page}`     
+    );
+
+    promise
+      .then((response) => {
+
+        if (response.data.length === 0 || response.data.length < 10){
+          setNoMore(false)
+        }
+        setPostData([...response.data]);
+
+        setPage(page+1);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+
   return (
     <>
       <Header />
@@ -66,7 +87,7 @@ export default function Timeline() {
           <NewPost />
           {postData.length > 0 ? <LineWaitingPosts posts={postData} setPosts={setPostData} /> : null} 
           <TimelineStyle>
-            <div className="timeline">
+            <div className="timeline" >
               {loading ? (
                 <RotatingLines
                   strokeColor="grey"
@@ -76,7 +97,15 @@ export default function Timeline() {
                   visible={true}
                 />
               ) : (
-                <RenderPosts />
+                <InfiniteScroll pageStart={page}
+                  loadMore={loadPostsToScroll}
+                  hasMore={noMore}
+                  loader={
+                  <p style={{textAlign: 'center', color:'#6D6D6D','font-family':'Lato', 'font-size':'22px'}}>Loading...</p>}
+                  endMessage={<p>There is no more posts!</p>}
+                  >                  
+                  <RenderPosts />
+                </InfiniteScroll>
               )}
             </div>
           </TimelineStyle>

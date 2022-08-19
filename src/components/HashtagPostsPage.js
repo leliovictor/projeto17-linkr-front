@@ -7,14 +7,16 @@ import Header from "./Header";
 import BuildPosts from "./Posts"
 import UserContext from "../contexts/UserContext";
 import TrendingSideBar from "./TrendingSideBar";
+import InfiniteScroll from "react-infinite-scroller";
 
 export default function HashtagPostsPage() {
     const [hashtagPostData, setHashtagPostData] = useState([]);
+    const [page, setPage] = useState(1)
+    const [noMore, setNoMore] = useState(true)
     const { data, hashtagName, refreshKey } = useContext(UserContext);
-    const { config } = data
 
     useEffect(() => {
-        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}`, config);
+        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}?page=1`, data.config);
         receive.then((response) => {
             setHashtagPostData(response.data);
             if (response.data.length === 0) {
@@ -40,7 +42,26 @@ export default function HashtagPostsPage() {
         );
       };
 
-
+      function loadPostsToScroll() {
+        const promise = axios.get(
+          `http://localhost:4000/hashtag/${hashtagName}?page=${page}`, data.config     
+        );
+    
+        promise
+          .then((response) => {
+    
+            if (response.data.length === 0 || response.data.length < 10){
+              setNoMore(false)
+            }
+            setHashtagPostData([...response.data]);
+    
+            setPage(page+1);
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      }
+      
     return (
         <>
             <Header />
@@ -52,7 +73,15 @@ export default function HashtagPostsPage() {
                 <HashtagPageStyle>
                     <div className="hashagPost">
                     {hashtagPostData.length !== 0 ? (
-                        <RenderPosts />
+                        <InfiniteScroll pageStart={page}
+                          loadMore={loadPostsToScroll}
+                          hasMore={noMore}
+                          loader={
+                          <p style={{textAlign: 'center', color:'#6D6D6D','font-family':'Lato', 'font-size':'22px'}}>Loading...</p>}
+                          endMessage={<p>There is no more posts!</p>}
+                          >                  
+                          <RenderPosts />
+                      </InfiniteScroll>
                     ) : (
                         <RotatingLines
                         strokeColor="grey"

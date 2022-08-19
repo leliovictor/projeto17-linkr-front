@@ -3,19 +3,21 @@ import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
-
 import Header from "./Header";
 import BuildPosts from "./Posts"
 import UserContext from "../contexts/UserContext";
+import InfiniteScroll from "react-infinite-scroller";
 
 export default function UserPage() {
     const [userPostData, setUserPostData] = useState([]);
+    const [page, setPage] = useState(1)
+    const [noMore, setNoMore] = useState(true)
     const { data, userPostName } = useContext(UserContext);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
       setLoading(true);
-        const receive = axios.get(`http://localhost:4000/user/${userPostName?.userId}`);
+        const receive = axios.get(`http://localhost:4000/user/${userPostName?.userId}?page=1`);
         receive.then((response) => {
             setUserPostData(response.data);
             setLoading(false);
@@ -45,6 +47,26 @@ export default function UserPage() {
         );
       };
 
+      function loadPostsToScroll() {
+        const promise = axios.get(
+          `http://localhost:4000/user/${userPostName?.userId}?page=${page}`     
+        );
+    
+        promise
+          .then((response) => {
+    
+            if (response.data.length === 0 || response.data.length < 10){
+              setNoMore(false)
+            }
+            setUserPostData([...response.data]);
+    
+            setPage(page+1);
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      }
+
     return (
         <>
             <Header />
@@ -54,7 +76,15 @@ export default function UserPage() {
             <UserPageStyle>
                 <div className="userPosts">
                 {!loading ? (
-                    <RenderPosts />
+                    <InfiniteScroll pageStart={page}
+                      loadMore={loadPostsToScroll}
+                      hasMore={noMore}
+                      loader={
+                      <p style={{textAlign: 'center', color:'#6D6D6D','font-family':'Lato', 'font-size':'22px'}}>Loading...</p>}
+                      endMessage={<p>There is no more posts!</p>}
+                      >                  
+                      <RenderPosts />
+                  </InfiniteScroll>
                 ) : (
                     <RotatingLines
                     strokeColor="grey"
