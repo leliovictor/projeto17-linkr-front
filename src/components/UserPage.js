@@ -38,7 +38,7 @@ export default function UserPage() {
       alert(
         "An error occured while trying to fetch the posts, please refresh the page"
       );
-      console.log(err);
+      console.log("error userPage:", err);
     });
   }, [userPostName]);
 
@@ -47,7 +47,9 @@ export default function UserPage() {
       <>
         {userPostData?.length > 0 ? (
           userPostData.map((post, index) => (
-            <BuildPosts key={index} post={post} data={data} />
+            <div className="backgroundPosts">
+              <BuildPosts key={index} post={post} data={data} />
+            </div>
           ))
         ) : (
           <NoPosts>{userPostName?.username} hadn't shared posts yet</NoPosts>
@@ -160,6 +162,13 @@ const UserPageStyle = styled.div`
     line-height: 64px;
     color: #ffffff;
     margin-bottom: 43px;
+  }
+
+  .backgroundPosts {
+    background-color: #1E1E1E;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 1px;
   }
 
   @media (max-width: 580px) {

@@ -198,6 +198,7 @@ const TimelineStyle = styled.div`
     background-color: #1E1E1E;
     border-radius: 16px;
     margin-bottom: 24px;
+    padding-bottom: 1px;
   }
 
   @media (max-width: 560px) {

@@ -17,6 +17,8 @@ export default function HashtagPostsPage() {
     const [noMore, setNoMore] = useState(true)
     const { data, hashtagName, refreshKey } = useContext(UserContext);
 
+    console.log(data.config)
+
     useEffect(() => {
         const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}?page=1`, data.config);
         receive.then((response) => {
@@ -37,7 +39,9 @@ export default function HashtagPostsPage() {
         return (
           <>
             {hashtagPostData.map((post, index) => (
-              <BuildPosts key={index} post={post} data={data}/>
+              <div className="backgroundPosts">
+                <BuildPosts key={index} post={post} data={data}/>
+              </div>
             ))}
             <ReactTooltip type="light" place="bottom" effect="solid"/>
           </>
@@ -160,6 +164,14 @@ const HashtagPageStyle = styled.div`
     color: #ffffff;
     margin-bottom: 43px;
   }
+
+  .backgroundPosts {
+    background-color: #1E1E1E;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 1px;
+  }
+
   @media (max-width: 580px) {
     .hashagPost {
       width: 100%;
