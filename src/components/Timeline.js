@@ -71,7 +71,7 @@ export default function Timeline() {
     promise
       .then((response) => {
         if (response.data.posts.length === 0 || response.data.posts.length < 10){
-          //setNoMore(false)
+          setNoMore(false)
         }
         setPostData([...postData,...response.data.posts]);
 
