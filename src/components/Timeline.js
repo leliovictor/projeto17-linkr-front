@@ -18,19 +18,16 @@ export default function Timeline() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1)
   const [noMore, setNoMore] = useState(true)
-  
+  const [following, setFollowing] = useState(0);
+
   useEffect(() => {
     setLoading(true);
-    const receive = axios.get(
-      `http://localhost:4000/timeline?page=1`
-    );
+
+    const receive = axios.get("http://localhost:4000/timeline?page=1", data.config);
     receive.then((response) => {
       setLoading(false);
-      setPostData(response.data);
-
-      if (response.data.length === 0) {
-        console.log("There are no posts yet");
-      }
+      setPostData(response.data.posts);
+      setFollowing(response.data.followCount);
     });
 
     receive.catch((err) => {
@@ -44,13 +41,20 @@ export default function Timeline() {
   function RenderPosts() {
     return (
       <>
-        {postData.map((post, index) => (
-          <BuildPosts
-            key={index}
-            post={post}
-            data={data}
-          />
-        ))}
+        {!following ? (
+          <NoFollows>
+            You don't follow anyone yet. Search for new friends!
+          </NoFollows>
+        ) : (
+          <></>
+        )}
+        {following && postData.length === 0 ? (
+          <NoPosts>No posts found from your friends or you</NoPosts>
+        ) : (
+          postData.map((post, index) => (
+            <BuildPosts key={index} post={post} data={data} />
+          ))
+        )}
         <ReactTooltip type="light" place="bottom" effect="solid" />
       </>
     );
@@ -58,7 +62,7 @@ export default function Timeline() {
 
   function loadPostsToScroll() {
     const promise = axios.get(
-      `http://localhost:4000/timeline?page=${page}`     
+      `http://localhost:4000/timeline?page=${page}`, data.config    
     );
 
     promise
@@ -125,6 +129,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
 `;
+
 const LeftContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -132,6 +137,7 @@ const LeftContainer = styled.div`
   width: 100%;
   height: fit-content;
 `;
+
 const RightContainer = styled.div`
   margin-left: 25px;
   width:20%;
@@ -139,6 +145,7 @@ const RightContainer = styled.div`
     display: none;
   }
 `;
+
 const Title = styled.div`
   font-family: "Oswald";
   font-weight: 700;
@@ -188,6 +195,7 @@ const TimelineStyle = styled.div`
     }
   }
 `;
+
 const Infinite = styled.div`
   display:flex;
   flex-direction:column;
@@ -205,3 +213,14 @@ const Infinite = styled.div`
     color: #6D6D6D;
   }
 `
+
+const NoFollows = styled.h1`
+  color: #ffffff;
+  width: 500px;
+  font-size: 20px;
+  text-align: center;
+  font-family: "Lato";
+  margin: 30px 0;
+`;
+
+const NoPosts = styled(NoFollows)``;

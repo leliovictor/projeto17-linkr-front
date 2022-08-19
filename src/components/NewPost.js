@@ -20,7 +20,6 @@ export default function NewPost() {
           }          
             
     const { config }  = data
-    
     const promise = axios.post("http://localhost:4000/posts", newPost, config)
     
     promise

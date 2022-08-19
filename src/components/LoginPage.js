@@ -26,7 +26,7 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await axios.post("https://projeto17--linkr--backend.herokuapp.com/", body);
+      const response = await axios.post("http://localhost:4000/", body);
 
       registerLogin(response.data, body);
     } catch (err) {
@@ -58,7 +58,9 @@ export default function LoginPage() {
         const response = await axios.post("http://localhost:4000/", body);
         registerLogin(response.data, body);
       } catch (err) {
+        
         setLoading(false);
+        localStorage.removeItem("autoLogin");
       }
     }
   }

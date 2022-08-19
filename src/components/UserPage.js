@@ -4,54 +4,62 @@ import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
 import Header from "./Header";
-import BuildPosts from "./Posts"
+import BuildPosts from "./Posts";
+import FollowButton from "./FollowButton";
 import UserContext from "../contexts/UserContext";
+import TrendingSideBar from "./TrendingSideBar";
 import InfiniteScroll from "react-infinite-scroller";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-
 export default function UserPage() {
-    const [userPostData, setUserPostData] = useState([]);
-    const [page, setPage] = useState(1)
-    const [noMore, setNoMore] = useState(true)
-    const { data, userPostName } = useContext(UserContext);
-    const [loading, setLoading] = useState(true);
+  const [userPostData, setUserPostData] = useState([]);
+  const { data, userPostName } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1)
+  const [noMore, setNoMore] = useState(true)
 
-    useEffect(() => {
-      setLoading(true);
-        const receive = axios.get(`http://localhost:4000/user/${userPostName?.userId}?page=1`);
-        receive.then((response) => {
-            setUserPostData(response.data);
-            setLoading(false);
-    
-            if (response.data.length === 0) {
-                console.log("There are no posts yet");
-                setLoading(false);
-            }
-        });
-    
-        receive.catch((err) => {
-            alert(
-                "An error occured while trying to fetch the posts, please refresh the page"
-            );
-            console.log(err);
-        });
-    }, [userPostName]);
+  useEffect(() => {
+    setLoading(true);
+    const receive = axios.get(
+      `http://localhost:4000/user/${userPostName?.userId}?page=1`,
+      data.config
+    );
+    receive.then((response) => {
+      setUserPostData(response.data);
+      setLoading(false);
 
-    function RenderPosts() {
-        return (
-          <>
-            {userPostData.map((post, index) => (
-              <BuildPosts key={index} post={post} data={data}/>
-            ))}
-            <ReactTooltip type="light" place="bottom" effect="solid"/>
-          </>
-        );
-      };
+      if (response.data.length === 0) {
+        console.log("There are no posts yet");
+        setLoading(false);
+      }
+    });
 
-      function loadPostsToScroll() {
+    receive.catch((err) => {
+      alert(
+        "An error occured while trying to fetch the posts, please refresh the page"
+      );
+      console.log(err);
+    });
+  }, [userPostName]);
+
+  function RenderPosts() {
+    return (
+      <>
+        {userPostData?.length > 0 ? (
+          userPostData.map((post, index) => (
+            <BuildPosts key={index} post={post} data={data} />
+          ))
+        ) : (
+          <NoPosts>{userPostName?.username} hadn't shared posts yet</NoPosts>
+        )}
+        <ReactTooltip type="light" place="bottom" effect="solid" />
+      </>
+    );
+  }
+  
+  function loadPostsToScroll() {
         const promise = axios.get(
-          `http://localhost:4000/user/${userPostName?.userId}?page=${page}`     
+          `http://localhost:4000/user/${userPostName?.userId}?page=${page}`, data.config     
         );
     
         promise
@@ -69,16 +77,19 @@ export default function UserPage() {
           });
       }
 
-    return (
-        <>
-            <Header />
-            <Title>
-                <h1>{userPostName?.username}'s posts</h1>
-            </Title>
-            <UserPageStyle>
-                <div className="userPosts">
-                {!loading ? (
-                    <InfiniteScroll pageStart={page}
+  return (
+    <>
+      <Header />
+      <Container>
+        <Title>
+          <h1>{userPostName?.username}'s posts</h1>
+          <FollowButton />
+        </Title>
+        <Content>
+          <UserPageStyle>
+            <div className="userPosts">
+              {!loading ? (
+                 <InfiniteScroll pageStart={page}
                       loadMore={loadPostsToScroll}
                       hasMore={noMore}
                       loader={<Infinite>
@@ -88,36 +99,41 @@ export default function UserPage() {
                       >                  
                       <RenderPosts />
                   </InfiniteScroll>
-                  
-                ) : (
-                    <RotatingLines
-                    strokeColor="grey"
-                    strokeWidth="5"
-                    animationDuration="0.75"
-                    width="96"
-                    visible={true}
-                    />
-                )}
-                </div>
-            </UserPageStyle>
-        </>
-    )
-};
+              ) : (
+                <RotatingLines
+                  strokeColor="grey"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  width="96"
+                  visible={true}
+                />
+              )}
+            </div>
+          </UserPageStyle>
+          <Section>
+            <TrendingSideBar />
+          </Section>
+        </Content>
+      </Container>
+    </>
+  );
+}
 
 const Title = styled.div`
-  font-family: "Oswald";
-  font-weight: 700;
-  font-size: 43px;
-  line-height: 64px;
   width: 100%;
-  margin-top: 78px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  align-items: center;
   color: #ffffff;
+
   h1 {
-    width: 611px;
+    width: 100%;
+    font-family: "Oswald";
+    font-weight: 700;
+    font-size: 43px;
+    line-height: 64px;
   }
-  
+
   @media (max-width: 580px) {
     margin-left: 18px;
   }
@@ -169,3 +185,45 @@ const Infinite = styled.div`
     color: #6D6D6D;
   }
 `
+const Container = styled.div`
+  width: fit-content;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 78px auto 0 auto;
+`;
+const LeftContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const RightContainer = styled.div`
+  margin-left: 25px;
+  @media (max-width: 560px) {
+    display: none;
+  }
+`;
+
+const Content = styled.div`
+  display: flex;
+`;
+
+const Section = styled.section`
+  position: relative;
+  margin-left: 25px;
+  width: 20vw;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+
+const NoPosts = styled.h1`
+  color: #ffffff;
+  width: 500px;
+  font-family: "Lato";
+  font-weight: 400;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 50px;
+`;
