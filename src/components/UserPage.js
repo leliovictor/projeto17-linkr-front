@@ -21,7 +21,7 @@ export default function UserPage() {
   useEffect(() => {
     setLoading(true);
     const receive = axios.get(
-      `http://localhost:4000/user/${userPostName?.userId}?page=1`,
+      `https://projeto17--linkr--backend.herokuapp.com/user/${userPostName?.userId}?page=1`,
       data.config
     );
     receive.then((response) => {
@@ -61,7 +61,7 @@ export default function UserPage() {
   
   function loadPostsToScroll() {
         const promise = axios.get(
-          `http://localhost:4000/user/${userPostName?.userId}?page=${page}`, data.config     
+          `https://projeto17--linkr--backend.herokuapp.com/user/${userPostName?.userId}?page=${page}`, data.config     
         );
     
         promise

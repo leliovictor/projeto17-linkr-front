@@ -20,7 +20,7 @@ export default function HashtagPostsPage() {
     console.log(data.config)
 
     useEffect(() => {
-        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}?page=1`, data.config);
+        const receive = axios.get(`https://projeto17--linkr--backend.herokuapp.com/hashtag/${hashtagName}?page=1`, data.config);
         receive.then((response) => {
             setHashtagPostData(response.data);
             if (response.data.length === 0) {
@@ -50,7 +50,7 @@ export default function HashtagPostsPage() {
 
       function loadPostsToScroll() {
         const promise = axios.get(
-          `http://localhost:4000/hashtag/${hashtagName}?page=${page}`, data.config     
+          `https://projeto17--linkr--backend.herokuapp.com/hashtag/${hashtagName}?page=${page}`, data.config     
         );
     
         promise

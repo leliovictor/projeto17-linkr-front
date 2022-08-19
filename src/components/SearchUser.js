@@ -22,7 +22,7 @@ export default function SearchUser() {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/user/search",
+        "https://projeto17--linkr--backend.herokuapp.com/user/search",
         body,
         data.config
       );

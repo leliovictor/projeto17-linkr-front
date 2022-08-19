@@ -23,7 +23,7 @@ export default function Timeline() {
   useEffect(() => {
     if (data.config) {
       setLoading(true);
-      const receive = axios.get("http://localhost:4000/timeline?page=1", data.config);
+      const receive = axios.get("https://projeto17--linkr--backend.herokuapp.com/timeline?page=1", data.config);
       receive.then((response) => {
         setLoading(false);
         setPostData(response.data.posts);
@@ -65,13 +65,13 @@ export default function Timeline() {
 
   function loadPostsToScroll() {
     const promise = axios.get(
-      `http://localhost:4000/timeline?page=${page}`, data.config    
+      `https://projeto17--linkr--backend.herokuapp.com/timeline?page=${page}`, data.config    
     );
 
     promise
       .then((response) => {
         if (response.data.posts.length === 0 || response.data.posts.length < 10){
-          setNoMore(false)
+          //setNoMore(false)
         }
         setPostData([...postData,...response.data.posts]);
 

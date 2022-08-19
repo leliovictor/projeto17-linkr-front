@@ -64,7 +64,7 @@ export default function BuildPosts(props) {
     function like () {
       if (likeButton === "heart") {
         const dislikeAxios = axios.post(
-          `http://localhost:4000/post/${post.postId}/dislike`,
+          `https://projeto17--linkr--backend.herokuapp.com/post/${post.postId}/dislike`,
           { userId: data.id }
         );
         
@@ -79,7 +79,7 @@ export default function BuildPosts(props) {
 
         } else {
             const likeAxios = axios.post(
-              `http://localhost:4000/post/${post.postId}/like`,
+              `https://projeto17--linkr--backend.herokuapp.com/post/${post.postId}/like`,
               { userId: data.id }
             );
 
@@ -129,7 +129,7 @@ export default function BuildPosts(props) {
       const { config } = data;
       setDisabled(true);
 
-      const sendEdit = axios.post(`http://localhost:4000/post/${post.postId}/edit`, {message: editContent}, config);
+      const sendEdit = axios.post(`https://projeto17--linkr--backend.herokuapp.com/post/${post.postId}/edit`, {message: editContent}, config);
 
       sendEdit.then(() => {
         setDisabled(false);
@@ -168,7 +168,7 @@ export default function BuildPosts(props) {
           ownerOfThePost: data.id
         };
 
-        const sendComment = axios.post(`http://localhost:4000/post/${post.postId}/comment`, commentData, config);
+        const sendComment = axios.post(`https://projeto17--linkr--backend.herokuapp.com/post/${post.postId}/comment`, commentData, config);
 
         sendComment.then(() => {
             setComment("");

@@ -14,7 +14,7 @@ export default function FollowButton() {
   async function checkFollowStatus() {
     try {
       const response = await axios.get(
-        `http://localhost:4000/user/follow/${userPostName?.userId}`,
+        `https://projeto17--linkr--backend.herokuapp.com/user/follow/${userPostName?.userId}`,
         data.config
       );
       setFollow(response.data);
@@ -55,7 +55,7 @@ export default function FollowButton() {
     };
 
     try {
-      await axios.post("http://localhost:4000/user/follow", body, data.config);
+      await axios.post("https://projeto17--linkr--backend.herokuapp.com/user/follow", body, data.config);
       setRefreshKey(!refreshKey);
       setLoading(false);
     } catch (err) {

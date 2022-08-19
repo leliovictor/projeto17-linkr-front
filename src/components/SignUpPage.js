@@ -26,7 +26,7 @@ export default function LoginPage() {
     };
 
     try {
-      await axios.post("http://localhost:4000/sign-up", body);
+      await axios.post("https://projeto17--linkr--backend.herokuapp.com/sign-up", body);
 
       alert(`Your registration has been successfully completed.`);
       navigate("/");
