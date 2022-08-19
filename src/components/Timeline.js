@@ -20,6 +20,7 @@ export default function Timeline() {
     setLoading(true);
 
     const receive = axios.get("http://localhost:4000/timeline", data.config);
+
     receive.then((response) => {
       setLoading(false);
       setPostData(response.data.posts);
@@ -50,9 +51,12 @@ export default function Timeline() {
           <NoPosts>No posts found from your friends or you</NoPosts>
         ) : (
           postData.map((post, index) => (
-            <BuildPosts key={index} post={post} data={data} />
+            <div className="backgroundPosts">
+              <BuildPosts key={index} post={post} data={data} />
+            </div>
           ))
         )}
+
         <ReactTooltip type="light" place="bottom" effect="solid" />
       </>
     );
@@ -78,7 +82,7 @@ export default function Timeline() {
                   width="96"
                   visible={true}
                 />
-              ) : (
+              ) : ( 
                 <RenderPosts />
               )}
             </div>
@@ -153,6 +157,16 @@ const TimelineStyle = styled.div`
     line-height: 64px;
     color: #ffffff;
     margin-bottom: 43px;
+  }
+
+  :last-child {
+    margin-bottom: 16px;
+  }
+
+  .backgroundPosts {
+    background-color: #1E1E1E;
+    border-radius: 16px;
+    margin-bottom: 24px;
   }
 
   @media (max-width: 560px) {
