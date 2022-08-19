@@ -17,7 +17,7 @@ export default function Timeline() {
 
   useEffect(() => {
     setLoading(true);
-
+    
     const receive = axios.get(
       "http://localhost:4000/timeline"
     );
@@ -150,6 +150,10 @@ const TimelineStyle = styled.div`
     line-height: 64px;
     color: #ffffff;
     margin-bottom: 43px;
+  }
+
+  :last-child {
+    margin-bottom: 16px;
   }
 
   @media (max-width: 560px) {

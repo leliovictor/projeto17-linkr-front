@@ -2,7 +2,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState, useEffect, useContext, useRef } from "react";
 import ReactTooltip from "react-tooltip";
-import { TiPencil } from "react-icons/ti";
+import { TiPencil, AiOutlineComment, IoPaperPlaneOutline } from "react-icons/all";
 import { Link, useNavigate } from "react-router-dom";
 
 import UserContext from "../contexts/UserContext";
@@ -24,6 +24,8 @@ export default function BuildPosts(props) {
     const [allowedEdit, setAllowedEdit] = useState(false);
     const [editContent, setEditContend] = useState("");
     const [disabled, setDisabled] = useState(false);
+
+    const [showCommentBox, setShowCommentBox] = useState(false);
 
     let iAmLiked = false;
 
@@ -147,15 +149,83 @@ export default function BuildPosts(props) {
     setEditContend("");
   };
 
-function makeEditable () {
-  setAllowedEdit(true);
-};
+  function makeEditable () {
+    setAllowedEdit(true);
+  };
 
-const tagStyle = {
-  color: "#FFFFFF",
-  fontWeight: 700,
-  cursor: "pointer",
-};
+  const tagStyle = {
+    color: "#FFFFFF",
+    fontWeight: 700,
+    cursor: "pointer",
+  };
+
+  function BuildCommentBox () {
+    const { config } = data;
+    const [comment, setComment] = useState()
+
+    function sendComments () {
+      const commentData = {
+        comment: comment,
+        ownerOfThePost: post.userId
+      };
+
+      const sendComment = axios.post(`http://localhost:4000/timeline/${post.postId}/comment`, commentData, config);
+
+      sendComment.then(() => {
+          console.log("enviou o commentario")
+      });
+
+      sendComment.catch((error) => {
+        console.log("deu erro ao enviar comentario", error)
+      });
+    }
+
+    function TemplateComment (props) {
+      const { pictureUrl, username, text } = props
+      return (
+        <>
+          <div className="comment">
+            <img src={pictureUrl} alt="" />
+            <div className="collum">
+              <div className="nameAndInfo">
+                <p>{username}</p>
+                <p>• informaçoes adicionais</p>
+              </div>
+              <p>{text}</p>
+            </div>
+          </div>
+          <div className="fatherOdTheSeparatoryLine">
+            <div className="separatoryLine" />
+          </div>
+        </>
+      )
+    };
+
+
+    return (
+      <>
+        <CommentBoxStyle>
+          {post.usersWhoCommented.map((commented, index) => (
+            <TemplateComment 
+              pictureUrl={commented.pictureUrl} 
+              username={commented.username} 
+              text={commented.text} 
+            />
+          ))}
+          <div className="boxWriteComment">
+            <img src={`${post.pictureUrl}`} alt="" />
+            <input
+              type="text" 
+              placeholder="write a comment..."
+              value={comment}
+              onChange={(e) => {setComment(e.target.value)}}
+            />
+            <IoPaperPlaneOutline className="ioPaperPlaneOutline" onClick={() => sendComments()} />
+          </div>
+        </CommentBoxStyle>
+      </>
+    )
+  };
 
     return (
         <>
@@ -171,6 +241,7 @@ const tagStyle = {
               </div>
                   <ion-icon name={likeButton} onClick={() => like()} />
                   <p data-tip={usersWhoLiked} >{quantityOfLike} likes</p>
+                  <AiOutlineComment className="aiOutlineComment" onClick={() => setShowCommentBox(!showCommentBox)}/>
               </div>
               <div className="column2">
                   <div className="profileName">
@@ -200,7 +271,7 @@ const tagStyle = {
                           onKeyDown={verifyKey}
                         />
                       ) : (
-                        <p >{messagePost}</p>
+                        <p>{messagePost}</p>
                     )}
                     </ReactTagify>
                   </div>
@@ -217,23 +288,31 @@ const tagStyle = {
                 <></>
               )}
             {data.id === post.userId ? (
-              <TiPencil className="pencil" onClick={() => {allowedEdit? cancelEdit() : makeEditable()}} />
+              <TiPencil className="tiPencil" onClick={() => {allowedEdit? cancelEdit() : makeEditable()}} />
               ) : (
                 <></>
               )}
           </PostStyle>
+          {showCommentBox ?
+            (
+              <BuildCommentBox />
+            ) : (
+              <></>
+            )}
         </>
     );
 };
+
 
 const PostStyle = styled.div`
   width: 611px;
   height: 276px;
   background-color: #171717;
   border-radius: 16px;
-  margin-bottom: 16px;
+  margin-top: 16px;
   display: flex;
   position: relative;
+
 
   .column1 {
     display: flex;
@@ -276,6 +355,12 @@ const PostStyle = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .aiOutlineComment {
+    color: #FFFFFF;
+    font-size: 22px;
+    margin-top: 15px;
   }
 
   .profilePicture img {
@@ -362,7 +447,7 @@ const PostStyle = styled.div`
     text-overflow: ellipsis;
   }
 
-  .pencil {
+  .tiPencil {
     color: #FFFFFF;
     font-size: 22px;
     position: absolute;
@@ -447,9 +532,144 @@ const PostStyle = styled.div`
       color: #cecece;
     }
   }
-`
+`;
+
+const CommentBoxStyle = styled.div`
+  width: 611px;
+  background-color: #1E1E1E;
+  border-radius: 16px;
+
+  img {
+    object-fit: cover;
+    width: 40px;
+    height: 40px;
+    border-radius: 26.5px;
+  }
+  .comment {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 14px;
+    margin-bottom: 20px;
+  }
+
+  .fatherOdTheSeparatoryLine {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .separatoryLine {
+    width: 90%;
+    height: 0px;
+    border: 1px solid #353535;
+    transform: rotate(-0.1deg);
+  }
+
+  .collum {
+    display: flex;
+    flex-direction: column;
+    width: 510px;
+  }
+
+  .collum .nameAndInfo {
+    display: flex;
+  }
+
+  .collum .nameAndInfo p:first-child {
+    height: 17px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    color: #F3F3F3;
+  }
+
+  .collum .nameAndInfo p:last-child {
+    height: 18px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: #565656;
+    margin-left: 4px;
+  }
+
+  .collum > p {
+    width: 364px;
+    height: 17px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: #ACACAC;
+    margin-top: 4px;
+  }
+
+  .boxWriteComment {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 25px;
+    margin-top: 19px;
+    position: relative;
+  }
+  .boxWriteComment .ioPaperPlaneOutline {
+    position: absolute;
+    right: 30px;
+    bottom: 10px;
+    color: #FFFFFF;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  input {
+    width: 510px;
+    height: 39px;
+    background-color: #252525;
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 40px;
+  }
+
+  input ::placeholder {
+    position: absolute;
+    width: 120px;
+    height: 17px;
+    font-family: 'Lato';
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.05em;
+    color: #575757;
+    border-style: none;
+  }
+
+  @media (max-width: 580px) {
+    width: 100%;
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .collum {
+      width: 320px;
+    }
+
+    input {
+      width: 320px;
+    }
+  }
+`;
 
 const LinkStyle = styled(Link)`
   text-decoration: none;
   color: #ffffff;
-`
+`;
