@@ -98,17 +98,18 @@ export default function Timeline() {
                   visible={true}
                 />
               ) : (
+                
                 <InfiniteScroll pageStart={page}
                   loadMore={loadPostsToScroll}
                   hasMore={noMore}
                   loader={<Infinite>
-                    <AiOutlineLoading3Quarters color="#6D6D6D" fontSize="32px"></AiOutlineLoading3Quarters>
-                    <span >Loading...</span>
+                      <AiOutlineLoading3Quarters color="#6D6D6D" fontSize="32px"></AiOutlineLoading3Quarters>
+                      <span >Loading...</span>
                     </Infinite>}
-                 
                   >                  
                   <RenderPosts />
                 </InfiniteScroll>
+              
               )}
             </div>
           </TimelineStyle>
@@ -164,7 +165,7 @@ const TimelineStyle = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 29px;
-
+ 
   .timeline {
     display: flex;
     flex-direction: column;

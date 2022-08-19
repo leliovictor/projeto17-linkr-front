@@ -88,6 +88,7 @@ export default function UserPage() {
                       >                  
                       <RenderPosts />
                   </InfiniteScroll>
+                  
                 ) : (
                     <RotatingLines
                     strokeColor="grey"
