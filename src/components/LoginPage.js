@@ -60,6 +60,7 @@ export default function LoginPage() {
       } catch (err) {
         
         setLoading(false);
+        localStorage.removeItem("autoLogin");
       }
     }
   }

@@ -8,13 +8,14 @@ export default function SearchRenderUser(props) {
   const navigate = useNavigate();
 
   const { setUsername, setFindUsers } = props;
-  const { id, username, pictureUrl } = props.userData;
-  const { setUserPostName } = useContext(UserContext);
+  const { id, username, pictureUrl, following } = props.userData;
+  const { setUserPostName, setRefreshKey, refreshKey } = useContext(UserContext);
 
   function redirectPage() {
     setUserPostName({ userId: id, username });
     setUsername("");
     setFindUsers([]);
+    setRefreshKey(!refreshKey);
     navigate(`/user/${id}`);
   }
 
@@ -22,6 +23,7 @@ export default function SearchRenderUser(props) {
     <Content onClick={() => redirectPage()}>
       <img src={pictureUrl} alt="User" />
       <h1>{username}</h1>
+      {following ? <p>&#8226; following</p> : <></>}
     </Content>
   );
 }
@@ -52,5 +54,14 @@ const Content = styled.div`
     line-height: 23px;
 
     color: #515151;
+  }
+
+  p {
+    font-family: "Lato";
+    font-size: 19px;
+    line-height: 23px;
+    margin-left: 7px;
+
+    color: #c5c5c5;
   }
 `;

@@ -14,20 +14,19 @@ export default function Timeline() {
   const [postData, setPostData] = useState([]);
   const { data, refreshKey } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
+  const [following, setFollowing] = useState(0);
 
   useEffect(() => {
     setLoading(true);
     
     const receive = axios.get(
-      "http://localhost:4000/timeline"
+      "http://localhost:4000/timeline", data.config
     );
+
     receive.then((response) => {
       setLoading(false);
-      setPostData(response.data);
-
-      if (response.data.length === 0) {
-        console.log("There are no posts yet");
-      }
+      setPostData(response.data.posts);
+      setFollowing(response.data.followCount);
     });
 
     receive.catch((err) => {
@@ -38,24 +37,27 @@ export default function Timeline() {
     });
   }, [refreshKey]);
 
-
-
   function RenderPosts() {
     return (
       <>
-        {postData.map((post, index) => (
-          <div className="backgroundPosts">
-            <BuildPosts
-              key={index}
-              post={post}
-              data={data}
-            />
-          </div>
-        ))}
+        {!following ? (
+          <NoFollows>
+            You don't follow anyone yet. Search for new friends!
+          </NoFollows>
+        ) : (
+          <></>
+        )}
+        {following && postData.length === 0 ? (
+          <NoPosts>No posts found from your friends or you</NoPosts>
+        ) : (
+          postData.map((post, index) => (
+            <BuildPosts key={index} post={post} data={data} />
+          ))
+        )}
         <ReactTooltip type="light" place="bottom" effect="solid" />
       </>
     );
-  }
+  };
 
   return (
     <>
@@ -170,3 +172,14 @@ const TimelineStyle = styled.div`
     }
   }
 `;
+
+const NoFollows = styled.h1`
+  color: #ffffff;
+  width: 500px;
+  font-size: 20px;
+  text-align: center;
+  font-family: "Lato";
+  margin: 30px 0;
+`;
+
+const NoPosts = styled(NoFollows)``;
