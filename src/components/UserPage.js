@@ -3,22 +3,25 @@ import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import ReactTooltip from "react-tooltip";
-
 import Header from "./Header";
 import BuildPosts from "./Posts";
 import FollowButton from "./FollowButton";
 import UserContext from "../contexts/UserContext";
 import TrendingSideBar from "./TrendingSideBar";
+import InfiniteScroll from "react-infinite-scroller";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function UserPage() {
   const [userPostData, setUserPostData] = useState([]);
   const { data, userPostName } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1)
+  const [noMore, setNoMore] = useState(true)
 
   useEffect(() => {
     setLoading(true);
     const receive = axios.get(
-      `http://localhost:4000/user/${userPostName?.userId}`,
+      `http://localhost:4000/user/${userPostName?.userId}?page=1`,
       data.config
     );
     receive.then((response) => {
@@ -53,6 +56,26 @@ export default function UserPage() {
       </>
     );
   }
+  
+  function loadPostsToScroll() {
+        const promise = axios.get(
+          `http://localhost:4000/user/${userPostName?.userId}?page=${page}`, data.config     
+        );
+    
+        promise
+          .then((response) => {
+    
+            if (response.data.length === 0 || response.data.length < 10){
+              setNoMore(false)
+            }
+            setUserPostData([...userPostData,...response.data]);
+    
+            setPage(page+1);
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      }
 
   return (
     <>
@@ -66,7 +89,16 @@ export default function UserPage() {
           <UserPageStyle>
             <div className="userPosts">
               {!loading ? (
-                <RenderPosts />
+                 <InfiniteScroll pageStart={page}
+                      loadMore={loadPostsToScroll}
+                      hasMore={noMore}
+                      loader={<Infinite>
+                        <AiOutlineLoading3Quarters color="#6D6D6D" fontSize="32px"></AiOutlineLoading3Quarters>
+                        <span >Loading...</span>
+                        </Infinite>}
+                      >                  
+                      <RenderPosts />
+                  </InfiniteScroll>
               ) : (
                 <RotatingLines
                   strokeColor="grey"
@@ -136,7 +168,23 @@ const UserPageStyle = styled.div`
     }
   }
 `;
-
+const Infinite = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-top:40px;
+  span{
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+    margin-top:15px;
+    margin-bottom:5px;
+    color: #6D6D6D;
+  }
+`
 const Container = styled.div`
   width: fit-content;
   height: 100%;
