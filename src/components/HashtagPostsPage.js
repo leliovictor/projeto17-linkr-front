@@ -7,14 +7,18 @@ import Header from "./Header";
 import BuildPosts from "./Posts"
 import UserContext from "../contexts/UserContext";
 import TrendingSideBar from "./TrendingSideBar";
+import InfiniteScroll from "react-infinite-scroller";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 
 export default function HashtagPostsPage() {
     const [hashtagPostData, setHashtagPostData] = useState([]);
+    const [page, setPage] = useState(1)
+    const [noMore, setNoMore] = useState(true)
     const { data, hashtagName, refreshKey } = useContext(UserContext);
-    const { config } = data
 
     useEffect(() => {
-        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}`, config);
+        const receive = axios.get(`http://localhost:4000/hashtag/${hashtagName}?page=1`, data.config);
         receive.then((response) => {
             setHashtagPostData(response.data);
             if (response.data.length === 0) {
@@ -40,7 +44,26 @@ export default function HashtagPostsPage() {
         );
       };
 
-
+      function loadPostsToScroll() {
+        const promise = axios.get(
+          `http://localhost:4000/hashtag/${hashtagName}?page=${page}`, data.config     
+        );
+    
+        promise
+          .then((response) => {
+            
+            if (response.data.length === 0 || response.data.length < 10){
+              setNoMore(false)
+            }
+            setHashtagPostData([...hashtagPostData,...response.data]);
+    
+            setPage(page+1);
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      }
+      
     return (
         <>
             <Header />
@@ -52,7 +75,17 @@ export default function HashtagPostsPage() {
                 <HashtagPageStyle>
                     <div className="hashagPost">
                     {hashtagPostData.length !== 0 ? (
-                        <RenderPosts />
+                        <InfiniteScroll pageStart={page}
+                          loadMore={loadPostsToScroll}
+                          hasMore={noMore}
+                          loader={<Infinite>
+                          <AiOutlineLoading3Quarters color="#6D6D6D" fontSize="32px"></AiOutlineLoading3Quarters>
+                          <span >Loading...</span>
+                          </Infinite>}
+                          
+                          >                  
+                          <RenderPosts />
+                      </InfiniteScroll>
                     ) : (
                         <RotatingLines
                         strokeColor="grey"
@@ -133,3 +166,21 @@ const HashtagPageStyle = styled.div`
     }
   }
 `;
+
+const Infinite = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-top:40px;
+  span{
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+    margin-top:15px;
+    margin-bottom:5px;
+    color: #6D6D6D;
+  }
+`

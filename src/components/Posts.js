@@ -249,8 +249,7 @@ export default function BuildPosts(props) {
       );
     };
 
-    return (
-
+  return (
         <>
           <PostStyle>
               <div className="column1">
